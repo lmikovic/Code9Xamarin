@@ -10,5 +10,6 @@ namespace Code9Xamarin.Core.Services
         void Register<TView, TViewModel>();
         Task NavigateAsync<TViewModel>(bool animated = true);
         Task NavigateAsync<TViewModel>(object parameter, bool animated = true);
+        void SetRootPage(Type viewModelType);
     }
 }

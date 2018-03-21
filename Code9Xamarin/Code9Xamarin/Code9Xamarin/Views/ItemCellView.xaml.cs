@@ -11,12 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace Code9Xamarin.Views
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class ItemCellView : ContentPage
+	public partial class ItemCellView : ViewCell
 	{
 		public ItemCellView ()
 		{
 			InitializeComponent ();
             BindingContext = new ItemCellViewModel(App.NavigationService);
         }
-	}
+    }
 }

@@ -11,6 +11,7 @@ namespace Code9Xamarin.ViewModels
     {
         public Command LoginCommand { get; }
 
+        //todo move this common parts to abstract class
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly INavigationService _navigationService;

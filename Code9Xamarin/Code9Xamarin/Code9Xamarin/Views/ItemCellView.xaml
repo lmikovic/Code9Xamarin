@@ -1,12 +1,86 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Code9Xamarin.Views.ItemCellView">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackLayout Orientation="Horizontal"
+                     Grid.Row="0"
+                     Margin="0,10">
+            <Label x:Name="UserNameText"
+                   HorizontalOptions="CenterAndExpand"
+                   Text="{Binding UserName}" />
+            <Label x:Name="DateTime"
+                   HorizontalOptions="CenterAndExpand"
+                   Text="{Binding DateTime}" />
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+        <Label Grid.Row="1"
+               x:Name="Description"
+               Margin="20,0"
+               Text="{Binding Description}"
+               HorizontalOptions="StartAndExpand"
+               LineBreakMode="TailTruncation" />
+        <Image HeightRequest="200"
+               x:Name="ImageContainer"
+               Source="{Binding ImageSource}"
+               Grid.Row="3" />
+        <StackLayout Orientation="Horizontal"
+                     Grid.Row="4"
+                     Margin="20,0">
+            <Label x:Name="LikesNumber"
+                   HorizontalOptions="StartAndExpand"
+                   Text="{Binding LikesNumber}" />
+            <Label x:Name="CommentsNumber"
+                   HorizontalOptions="EndAndExpand"
+                   Text="{Binding CommentsNumber}" />
+        </StackLayout>
+        <Grid Grid.Row="5"
+              HeightRequest="50">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*" />
+                <ColumnDefinition Width="33*" />
+                <ColumnDefinition Width="33*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LikeCommand}" />
+                </Grid.GestureRecognizers>
+                <Image x:Name="LikeIcon"
+                       Source="like.png"
+                       HeightRequest="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       WidthRequest="24" />
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CommentCommand}" />
+                </Grid.GestureRecognizers>
+                <Image x:Name="CommentIcon"
+                       Source="cloud.png"
+                       HeightRequest="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       WidthRequest="24" />
+            </Grid>
+            <Grid Grid.Column="2">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShareCommand}" />
+                </Grid.GestureRecognizers>
+                <Image x:Name="ShareIcon"
+                       Source="share.png"
+                       HeightRequest="24"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       WidthRequest="24" />
+            </Grid>
+        </Grid>
+    </Grid>
+
+</ViewCell>

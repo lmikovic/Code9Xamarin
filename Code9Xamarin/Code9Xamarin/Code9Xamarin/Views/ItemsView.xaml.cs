@@ -1,6 +1,7 @@
 ﻿using Code9Xamarin.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Code9Xamarin.Views
 		public ItemsView ()
 		{
 			InitializeComponent ();
-            BindingContext = new ItemsViewModel(App.NavigationService);
+            BindingContext = new ItemsViewModel(App.NavigationService, App.ImageService);
         }
-	}
+    }
 }

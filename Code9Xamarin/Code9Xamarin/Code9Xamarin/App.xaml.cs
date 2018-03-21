@@ -26,6 +26,7 @@ namespace Code9Xamarin
         //todo use some dependency injection container (autofac, unity, ninject)?
         public static IAuthenticationService AuthenticationService => new AuthenticationService();
         public static INavigationService NavigationService => new NavigationService();
+        public static IImageService ImageService => new ImageService();
 
         protected override void OnStart ()
 		{

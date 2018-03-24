@@ -7,9 +7,7 @@ namespace Code9Xamarin.Core.Services
 {
     public class ImageService : IImageService
     {
-        public List<ImageItem> GetImageList()
-        {
-            return new List<ImageItem>
+        private static List<ImageItem> dummyImageList = new List<ImageItem>
             {
                 new ImageItem()
                 {
@@ -42,6 +40,22 @@ namespace Code9Xamarin.Core.Services
                     CommentsNumber = 10
                 }
             };
+
+
+
+        public List<ImageItem> GetImageList()
+        {
+            return dummyImageList;
+        }
+
+        public void AddLike(int itemId)
+        {
+            dummyImageList.Find(x => x.Id == itemId).LikesNumber++;
+        }
+
+        public ImageItem GetItem(int itemId)
+        {
+            return dummyImageList.Find(x => x.Id == itemId);
         }
     }
 }

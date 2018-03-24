@@ -40,7 +40,9 @@ namespace Code9Xamarin.ViewModels
 
         private void LikeClick(int id)
         {
-            ImageList.FirstOrDefault(item => item.Id == id).CommentsNumber++;
+            //todo: update observable collection
+            _imageService.AddLike(id);
+            var selectedItem = ImageList.FirstOrDefault(item => item.Id == id);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace Code9Xamarin.ViewModels
 {
@@ -12,6 +13,8 @@ namespace Code9Xamarin.ViewModels
     {
         private readonly INavigationService _navigationService;
         private readonly IImageService _imageService;
+
+        public Command<int> LikeCommand { get; }
 
         public ObservableCollection<ImageItem> ImageList { get; set; }
 
@@ -30,7 +33,14 @@ namespace Code9Xamarin.ViewModels
             _navigationService = navigationService;
             _imageService = imageService;
 
+            LikeCommand = new Command<int>((id) => LikeClick(id));
+
             ImageList = new ObservableCollection<ImageItem>(imageService.GetImageList());
+        }
+
+        private void LikeClick(int id)
+        {
+            ImageList.FirstOrDefault(item => item.Id == id).CommentsNumber++;
         }
     }
 }

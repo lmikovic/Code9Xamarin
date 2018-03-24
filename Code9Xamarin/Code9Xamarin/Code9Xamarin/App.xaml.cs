@@ -18,7 +18,6 @@ namespace Code9Xamarin
 
             NavigationService.Register<LoginView, LoginViewModel>();
             NavigationService.Register<ItemsView, ItemsViewModel>();
-            NavigationService.Register<ItemCellView, ItemCellViewModel>();
 
             MainPage = new Views.LoginView();
         }

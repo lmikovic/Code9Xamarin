@@ -18,6 +18,10 @@ namespace Code9Xamarin.Views
 		{
 			InitializeComponent ();
             BindingContext = new ItemsViewModel(App.NavigationService, App.ImageService);
+
+            ItemsListView.ItemSelected += (sender, e) => {
+                ((ListView)sender).SelectedItem = null;
+            };
         }
     }
 }

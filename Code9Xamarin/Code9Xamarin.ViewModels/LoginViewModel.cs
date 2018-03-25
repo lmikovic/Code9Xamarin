@@ -90,7 +90,7 @@ namespace Code9Xamarin.ViewModels
         async Task Login()
         {
             IsBusy = true;
-            //_authenticationService.Login(UserName, Password); //probably login will be async
+            //_authenticationService.Login(UserName, Password);
             await Task.Delay(4000); //todo: add service call
             IsBusy = false;
 

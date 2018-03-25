@@ -15,9 +15,7 @@ namespace Code9Xamarin.ViewModels
         private readonly IImageService _imageService;
 
         public Command<int> LikeCommand { get; }
-
         public ObservableCollection<ImageItem> ImageList { get; set; }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         // This method is called by the Set accessor of each property.
@@ -34,15 +32,12 @@ namespace Code9Xamarin.ViewModels
             _imageService = imageService;
 
             LikeCommand = new Command<int>((id) => LikeClick(id));
-
             ImageList = new ObservableCollection<ImageItem>(imageService.GetImageList());
         }
 
         private void LikeClick(int id)
         {
-            //todo: update observable collection
             _imageService.AddLike(id);
-            var selectedItem = ImageList.FirstOrDefault(item => item.Id == id);
         }
     }
 }

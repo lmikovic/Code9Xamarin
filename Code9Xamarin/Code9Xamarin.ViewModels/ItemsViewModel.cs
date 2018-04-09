@@ -1,43 +1,52 @@
-﻿using Code9Xamarin.Core.Models;
+﻿using Code9Insta.API.Core.DTO;
+using Code9Xamarin.Core;
 using Code9Xamarin.Core.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
-using System.Linq;
 
 namespace Code9Xamarin.ViewModels
 {
-    public class ItemsViewModel : INotifyPropertyChanged
+    public class ItemsViewModel : ViewModelBase
     {
-        private readonly INavigationService _navigationService;
-        private readonly IImageService _imageService;
+        private readonly IPostService _postService;
 
-        public Command<int> LikeCommand { get; }
-        public ObservableCollection<ImageItem> ImageList { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public Command<Guid> LikeCommand { get; }
+        public ObservableCollection<PostDto> PostList { get; set; }
 
-        // This method is called by the Set accessor of each property.
-        // The CallerMemberName attribute that is applied to the optional propertyName
-        // parameter causes the property name of the caller to be substituted as an argument.
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        public ItemsViewModel(INavigationService navigationService, IPostService postService)
+            : base(navigationService)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _postService = postService;
+            LikeCommand = new Command<Guid>(async (id) => await LikeClick(id));
         }
 
-        public ItemsViewModel(INavigationService navigationService, IImageService imageService)
+        public override async Task InitializeAsync(object navigationData)
         {
-            _navigationService = navigationService;
-            _imageService = imageService;
+            try
+            {
+                IsBusy = true;
 
-            LikeCommand = new Command<int>((id) => LikeClick(id));
-            ImageList = new ObservableCollection<ImageItem>(imageService.GetImageList());
+                var allPosts = await _postService.GetAllPosts("", AppSettings.Token);
+
+                PostList = new ObservableCollection<PostDto>(allPosts);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Home] Error: {ex}");
+                //await DialogService.ShowAlertAsync(Resources.ExceptionMessage, Resources.ExceptionTitle, Resources.DialogOk);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
-        private void LikeClick(int id)
+        private async Task<bool> LikeClick(Guid id)
         {
-            _imageService.AddLike(id);
+            return await _postService.LikePost(id, AppSettings.Token);
         }
     }
 }

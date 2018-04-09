@@ -1,33 +1,20 @@
 ﻿using Code9Xamarin.Core.Services;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Code9Xamarin.ViewModels
 {
-    public class LoginViewModel : INotifyPropertyChanged
+    public class LoginViewModel : ViewModelBase
     {
         public Command LoginCommand { get; }
 
-        //todo move this common parts to abstract class
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private readonly INavigationService _navigationService;
         private readonly IAuthenticationService _authenticationService;
 
-        // This method is called by the Set accessor of each property.
-        // The CallerMemberName attribute that is applied to the optional propertyName
-        // parameter causes the property name of the caller to be substituted as an argument.
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public LoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService)
+            : base(navigationService)
         {
-            _navigationService = navigationService;
             _authenticationService = authenticationService;
             LoginCommand = new Command(async () => await Login(),
                 () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
@@ -36,65 +23,58 @@ namespace Code9Xamarin.ViewModels
         private bool _isBusy;
         public bool IsBusy
         {
-            get
-            {
-                return _isBusy;
-            }
+            get { return _isBusy; }
             set
             {
-                if (value != _isBusy)
-                {
-                    _isBusy = value;
-                    NotifyPropertyChanged();
-                    LoginCommand.ChangeCanExecute();
-                }
+                _isBusy = value;
+                OnPropertyChanged();
+                LoginCommand.ChangeCanExecute();
             }
         }
+
 
         private string _userName;
         public string UserName
         {
-            get
-            {
-                return _userName;
-            }
+            get { return _userName; }
             set
             {
-                if (value != _userName)
-                {
-                    _userName = value;
-                    NotifyPropertyChanged();
-                    LoginCommand.ChangeCanExecute();
-                }
+                _userName = value;
+                OnPropertyChanged();
+                LoginCommand.ChangeCanExecute();
             }
         }
 
         private string _password;
         public string Password
         {
-            get
-            {
-                return _password;
-            }
+            get { return _password; }
             set
             {
-                if (value != _password)
-                {
-                    _password = value;
-                    NotifyPropertyChanged();
-                    LoginCommand.ChangeCanExecute();
-                }
+                _password = value;
+                OnPropertyChanged();
+                LoginCommand.ChangeCanExecute();
             }
         }
 
         async Task Login()
         {
-            IsBusy = true;
-            //_authenticationService.Login(UserName, Password);
-            await Task.Delay(4000); //todo: add service call
-            IsBusy = false;
+            try
+            {
+                IsBusy = true;
 
-            await _navigationService.NavigateAsync<ItemsViewModel>();
+                await _authenticationService.Login(UserName, Password);
+                await _navigationService.NavigateAsync<ItemsViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Login] Error: {ex}");
+                //await DialogService.ShowAlertAsync(Resources.ExceptionMessage, Resources.ExceptionTitle, Resources.DialogOk);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

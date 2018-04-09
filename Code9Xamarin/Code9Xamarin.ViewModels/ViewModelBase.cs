@@ -1,7 +1,4 @@
 ﻿using Code9Xamarin.Core.Services;
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 

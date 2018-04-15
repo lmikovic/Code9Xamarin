@@ -5,13 +5,12 @@ using Xamarin.Forms.Xaml;
 namespace Code9Xamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class LoginView : ContentPage
+	public partial class PostDetailsView : ContentPage
 	{
-		public LoginView ()
+		public PostDetailsView ()
 		{
 			InitializeComponent ();
-            
-            BindingContext = new LoginViewModel(AppBootstrapper.NavigationService, AppBootstrapper.AuthenticationService);
+            BindingContext = new PostDetailsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.PostService);
         }
 	}
 }

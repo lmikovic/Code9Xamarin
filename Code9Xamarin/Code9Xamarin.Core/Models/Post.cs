@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Code9Xamarin.Core.Models
@@ -12,6 +13,7 @@ namespace Code9Xamarin.Core.Models
         public string[] Tags { get; set; }
         public string Description { get; set; }
         public string CreatedBy { get; set; }
+        public List<Comment> CommentList { get; set; }
 
         private int _likes;
         public int Likes

@@ -1,7 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Code9Xamarin.Converters"
              x:Class="Code9Xamarin.Views.PostsView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout>
             <Button Text="Create post" Command="{Binding CreatePostCommand}" />
@@ -88,7 +94,8 @@
                                                HeightRequest="24"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center"
-                                               WidthRequest="24">
+                                               WidthRequest="24"
+                                               IsVisible="{Binding IsLikedByUser, Converter={StaticResource InverseBoolConverter}}">
                                             <Image.Source>
                                                 <OnPlatform x:TypeArguments="ImageSource">
                                                     <On Platform="UWP">Assets/like.png</On>
@@ -96,10 +103,23 @@
                                                 </OnPlatform>
                                             </Image.Source>
                                         </Image>
+                                        <Image x:Name="LikeIcon2"
+                                               HeightRequest="24"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               WidthRequest="24"
+                                               IsVisible="{Binding IsLikedByUser}">
+                                            <Image.Source>
+                                                <OnPlatform x:TypeArguments="ImageSource">
+                                                    <On Platform="UWP">Assets/like2.png</On>
+                                                    <On Platform="iOS, Android">like2.png</On>
+                                                </OnPlatform>
+                                            </Image.Source>
+                                        </Image>                                        
                                     </Grid>
                                     <Grid Grid.Column="1">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CommentCommand, Source={x:Reference Name=PostsListView}}" />
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CommentCommand, Source={x:Reference Name=PostsListView}}" CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
                                         <Image x:Name="CommentIcon"
                                                HeightRequest="24"

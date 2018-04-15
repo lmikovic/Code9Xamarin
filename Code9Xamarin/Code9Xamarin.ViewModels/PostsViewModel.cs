@@ -19,25 +19,16 @@ namespace Code9Xamarin.ViewModels
 
         public Command<Guid> LikeCommand { get; }
         public Command CreatePostCommand { get; }
-        public Command LoadCommand { get; }
+        public Command<Guid> CommentCommand { get; }
 
         public PostsViewModel(INavigationService navigationService, IPostService postService)
             : base(navigationService)
         {
             _postService = postService;
+
             LikeCommand = new Command<Guid>(async (id) => await LikeClick(id), (id) => !IsBusy);
             CreatePostCommand = new Command(async () => await CreatePost(), () => !IsBusy);
-            LoadCommand = new Command(async () => await Load(), () => !IsBusy);
-        }
-
-        private async Task Load()
-        {
-            await InitializeAsync(null);
-        }
-
-        private async Task CreatePost()
-        {
-            await _navigationService.NavigateAsync<PostDetailsViewModel>();
+            CommentCommand = new Command<Guid>(async (id) => await CommentClick(id), (id) => !IsBusy);
         }
 
         private List<Post> _postList;
@@ -99,6 +90,18 @@ namespace Code9Xamarin.ViewModels
 
         private Post ConvertToPost(PostDto postDto)
         {
+            var commentList = new List<Comment>();
+
+            foreach(var commentDto in postDto.Comments)
+            {
+                var comment = new Comment
+                {
+                    Id = commentDto.Id,
+                    Text = commentDto.Text
+                };
+                commentList.Add(comment);
+            }
+
             return new Post
             {
                 Comments = postDto.Comments.Count,
@@ -109,7 +112,8 @@ namespace Code9Xamarin.ViewModels
                 ImageData = ImageSource.FromStream(() => new MemoryStream(postDto.ImageData)),
                 IsLikedByUser = postDto.IsLikedByUser,
                 Likes = postDto.Likes,
-                Tags = postDto.Tags
+                Tags = postDto.Tags,
+                CommentList = commentList
             };
         }
 
@@ -121,6 +125,17 @@ namespace Code9Xamarin.ViewModels
             PostList.First(x => x.Id == id).IsLikedByUser = postDto.IsLikedByUser;
 
             return await Task.FromResult(true);
+        }
+
+        private async Task CreatePost()
+        {
+            await _navigationService.NavigateAsync<PostDetailsViewModel>();
+        }
+
+        private async Task CommentClick(Guid id)
+        {
+            var selectedPost = PostList.Single(x => x.Id == id);
+            await _navigationService.NavigateAsync<CommentsViewModel>(selectedPost);
         }
     }
 }

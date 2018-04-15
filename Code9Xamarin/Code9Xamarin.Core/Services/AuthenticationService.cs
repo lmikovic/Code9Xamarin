@@ -17,9 +17,11 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<bool> Login(string userName, string password)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = "api/token/request";
-            builder.Query = $"userName={userName}&password={password}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = "api/token/request",
+                Query = $"userName={userName}&password={password}"
+            };
 
             string uri = builder.ToString();
 
@@ -39,9 +41,11 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<bool> RenewSession(Guid userId, string refreshToken)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/token/refresh";
-            builder.Query = $"userId={userId}&refreshToken={refreshToken}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/token/refresh",
+                Query = $"userId={userId}&refreshToken={refreshToken}"
+            };
 
             string uri = builder.ToString();
 

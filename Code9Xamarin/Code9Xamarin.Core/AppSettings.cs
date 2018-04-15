@@ -10,7 +10,7 @@ namespace Code9Xamarin.Core
     public static class AppSettings
     {
         // Endpoints
-        private const string DefaultBaseEndpoint = "http://code9instaapi20180404072500.azurewebsites.net";
+        private const string DefaultBaseEndpoint = "http://192.168.0.11:5000";// "http://code9instaapi20180404072500.azurewebsites.net";
 
         private static ISettings Settings => CrossSettings.Current;
 

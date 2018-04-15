@@ -9,7 +9,6 @@ using Android.OS;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Plugin.Permissions;
 
-
 namespace Code9Xamarin.Droid
 {
     [Activity(Label = "Code9Xamarin", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]

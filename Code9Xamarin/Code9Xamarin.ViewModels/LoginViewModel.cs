@@ -9,6 +9,7 @@ namespace Code9Xamarin.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         public Command LoginCommand { get; }
+        public Command RegisterCommand { get; }
 
         private readonly IAuthenticationService _authenticationService;
 
@@ -18,6 +19,8 @@ namespace Code9Xamarin.ViewModels
             _authenticationService = authenticationService;
             LoginCommand = new Command(async () => await Login(),
                 () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
+
+            RegisterCommand = new Command(async() => await RegisterNewUser());
         }
 
         private bool _isBusy;
@@ -31,7 +34,6 @@ namespace Code9Xamarin.ViewModels
                 LoginCommand.ChangeCanExecute();
             }
         }
-
 
         private string _userName;
         public string UserName
@@ -57,14 +59,14 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        async Task Login()
+        private async Task Login()
         {
             try
             {
                 IsBusy = true;
 
                 await _authenticationService.Login(UserName, Password);
-                await _navigationService.NavigateAsync<ItemsViewModel>();
+                await _navigationService.NavigateAsync<PostsViewModel>();
             }
             catch (Exception ex)
             {
@@ -75,6 +77,11 @@ namespace Code9Xamarin.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private async Task RegisterNewUser()
+        {
+            await _navigationService.NavigateAsync<RegisterViewModel>();
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:items="clr-namespace:Code9Xamarin.Views;assembly=Code9Xamarin"
-             x:Class="Code9Xamarin.Views.ItemsView">
+             x:Class="Code9Xamarin.Views.PostsView">
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="ItemsListView" ItemsSource="{Binding PostList}" HasUnevenRows="true">
+            <Button Text="Create post" Command="{Binding CreatePostCommand}" />
+            <ListView x:Name="PostsListView" ItemsSource="{Binding PostList}" HasUnevenRows="true">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -20,12 +20,38 @@
                                 <StackLayout Orientation="Horizontal"
                                      Grid.Row="0"
                                      Margin="0,10">
-                                    <Label x:Name="CreatedByText"
-                                       HorizontalOptions="CenterAndExpand"
-                                       Text="{Binding CreatedBy}" />
-                                    <Label x:Name="CreatedOn"
-                                       HorizontalOptions="CenterAndExpand"
-                                       Text="{Binding Path=CreatedOn, StringFormat='{0:D}'}" />
+                                    <Image x:Name="AvatarIcon"
+                                           HeightRequest="24"
+                                           WidthRequest="24"
+                                           HorizontalOptions="Start"
+                                           Margin="20,0,0,0">
+                                        <Image.Source>
+                                            <OnPlatform x:TypeArguments="ImageSource">
+                                                <On Platform="UWP">Assets/avatar.png</On>
+                                                <On Platform="iOS, Android">avatar.png</On>
+                                            </OnPlatform>
+                                        </Image.Source>
+                                    </Image>
+                                    <Label x:Name="UserNameText"
+                                           VerticalOptions="CenterAndExpand"
+                                           HorizontalOptions="Start"
+                                           Text="{Binding CreatedBy}" />
+                                    <Image x:Name="CalendarIcon"
+                                               HeightRequest="24"
+                                               HorizontalOptions="EndAndExpand"
+                                               WidthRequest="24">
+                                        <Image.Source>
+                                            <OnPlatform x:TypeArguments="ImageSource">
+                                                <On Platform="UWP">Assets/calendar.png</On>
+                                                <On Platform="iOS, Android">calendar.png</On>
+                                            </OnPlatform>
+                                        </Image.Source>
+                                    </Image>
+                                    <Label x:Name="DateTime"
+                                           VerticalOptions="CenterAndExpand"
+                                           HorizontalOptions="End"
+                                           Margin="0,0,20,0"
+                                           Text="{Binding Path=CreatedOn, StringFormat='{0:D}'}" />
                                 </StackLayout>
                                 <Label Grid.Row="1"
                                    x:Name="Description"
@@ -45,7 +71,7 @@
                                        Text="{Binding Path=Likes, StringFormat='Likes: {0}'}" />
                                     <Label x:Name="CommentsNumber"
                                        HorizontalOptions="EndAndExpand"
-                                       Text="{Binding Path=CommentsNumber, StringFormat='Comments: {0}'}" />
+                                       Text="{Binding Path=Comments, StringFormat='Comments: {0}'}" />
                                 </StackLayout>
                                 <Grid Grid.Row="5"
                                     HeightRequest="50">
@@ -56,7 +82,7 @@
                                     </Grid.ColumnDefinitions>
                                     <Grid Grid.Column="0">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.LikeCommand, Source={x:Reference Name=ItemsListView}}" CommandParameter="{Binding Id}"/>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.LikeCommand, Source={x:Reference Name=PostsListView}}" CommandParameter="{Binding Id}"/>
                                         </Grid.GestureRecognizers>
                                         <Image x:Name="LikeIcon"
                                                HeightRequest="24"
@@ -73,7 +99,7 @@
                                     </Grid>
                                     <Grid Grid.Column="1">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CommentCommand, Source={x:Reference Name=ItemsListView}}" />
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CommentCommand, Source={x:Reference Name=PostsListView}}" />
                                         </Grid.GestureRecognizers>
                                         <Image x:Name="CommentIcon"
                                                HeightRequest="24"
@@ -90,7 +116,7 @@
                                     </Grid>
                                     <Grid Grid.Column="2">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=ItemsListView}}" />
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=PostsListView}}" />
                                         </Grid.GestureRecognizers>
                                         <Image x:Name="DeleteIcon"
                                                HeightRequest="24"
@@ -103,7 +129,7 @@
                                                     <On Platform="iOS, Android">delete.png</On>
                                                 </OnPlatform>
                                             </Image.Source>
-                                        </Image>                                    
+                                        </Image>
                                     </Grid>
                                 </Grid>
                             </Grid>

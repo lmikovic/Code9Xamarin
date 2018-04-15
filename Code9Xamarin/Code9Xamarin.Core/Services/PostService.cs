@@ -17,9 +17,11 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<IEnumerable<PostDto>> GetAllPosts(string searchString, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/posts/all";
-            builder.Query = $"searchString={searchString}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/posts/all",
+                Query = $"searchString={searchString}"
+            };
 
             string uri = builder.ToString();
 
@@ -28,8 +30,10 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<PostDto> GetPost(Guid id, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/posts/{id}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/posts/{id}"
+            };
 
             string uri = builder.ToString();
 
@@ -38,18 +42,24 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<bool> CreatePost(CreatePostDto post, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = "api/posts";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = "api/posts"
+            };
 
             string uri = builder.ToString();
 
-            return await _requestService.PostAsync<CreatePostDto, bool>(uri, post, token);
+            string message = await _requestService.PostAsync<CreatePostDto, string>(uri, post, token);
+
+            return await Task.FromResult(true);
         }
 
         public async Task<bool> EditPost(EditPostDto post, Guid id, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/posts/{id}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/posts/{id}"
+            };
 
             string uri = builder.ToString();
 
@@ -58,22 +68,30 @@ namespace Code9Xamarin.Core.Services
 
         public async Task<bool> LikePost(Guid id, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/posts/{id}/reactToPost";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/posts/{id}/reactToPost"
+            };
 
             string uri = builder.ToString();
 
-            return await _requestService.PutAsync<EditPostDto, bool>(uri, null, token);
+            string message = await _requestService.PutAsync<EditPostDto, string>(uri, null, token);
+
+            return await Task.FromResult(true);
         }
 
         public async Task<bool> DeletePost(Guid id, string token)
         {
-            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint);
-            builder.Path = $"api/posts/{id}";
+            UriBuilder builder = new UriBuilder(AppSettings.BaseEndpoint)
+            {
+                Path = $"api/posts/{id}"
+            };
 
             string uri = builder.ToString();
 
-            return await _requestService.DeleteAsync<EditPostDto, bool>(uri, null, token);
+            await _requestService.DeleteAsync<string, string>(uri, null, token);
+
+            return await Task.FromResult(true);
         }
     }
 }

@@ -14,20 +14,6 @@ namespace Code9Xamarin.ViewModels
             _navigationService = navigationService;
         }
 
-        public bool IsBusy
-        {
-            get
-            {
-                return _isBusy;
-            }
-
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-            }
-        }
-
         public virtual Task InitializeAsync(object navigationData)
         {
             return Task.FromResult(false);

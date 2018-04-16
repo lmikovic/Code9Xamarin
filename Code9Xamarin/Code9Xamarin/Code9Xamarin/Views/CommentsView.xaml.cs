@@ -7,10 +7,28 @@ namespace Code9Xamarin.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class CommentsView : ContentPage
 	{
-		public CommentsView ()
+        CommentsViewModel _commentsViewModel;
+        object _parameter;
+
+        public CommentsView ()
 		{
 			InitializeComponent ();
-            BindingContext = new CommentsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.CommentService);
+            _commentsViewModel = new CommentsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.CommentService);
+            BindingContext = _commentsViewModel;
         }
-	}
+
+        public CommentsView(object parameter) : this()
+        {
+            _parameter = parameter;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_parameter != null)
+            {
+                _commentsViewModel.Initialize(_parameter);
+            }
+        }
+    }
 }

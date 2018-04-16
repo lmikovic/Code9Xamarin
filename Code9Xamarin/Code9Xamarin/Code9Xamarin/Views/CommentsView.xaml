@@ -3,10 +3,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Code9Xamarin.Views.CommentsView">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <Grid x:Name="Container"
+                  HorizontalOptions="FillAndExpand"
+                  VerticalOptions="FillAndExpand"
+                  Margin="20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView x:Name="CommentsListView" ItemsSource="{Binding Comments}" HasUnevenRows="true" Grid.Row="0" SeparatorColor="Black" Margin="0,10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Text}" Grid.Column="0"/>
+                                <Image x:Name="DeleteIcon"
+                                       HeightRequest="24"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       WidthRequest="24"
+                                       Grid.Column="1">
+                                    <Image.Source>
+                                        <OnPlatform x:TypeArguments="ImageSource">
+                                            <On Platform="UWP">Assets/delete.png</On>
+                                            <On Platform="iOS, Android">delete.png</On>
+                                        </OnPlatform>
+                                    </Image.Source>
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=CommentsListView}}" CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackLayout Orientation="Vertical" Grid.Row="1" VerticalOptions="End">
+                <Editor HeightRequest="70" BackgroundColor="LightGray" Text="{Binding Text}"/>
+                <Button Text="Save" Command="{Binding SaveCommand}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}"/>
+            </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

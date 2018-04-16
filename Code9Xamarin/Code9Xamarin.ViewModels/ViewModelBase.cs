@@ -7,7 +7,6 @@ namespace Code9Xamarin.ViewModels
     public abstract class ViewModelBase : BindableObject
     {
         protected readonly INavigationService _navigationService;
-        private bool _isBusy;
 
         public ViewModelBase(INavigationService navigationService)
         {
@@ -17,6 +16,10 @@ namespace Code9Xamarin.ViewModels
         public virtual Task InitializeAsync(object navigationData)
         {
             return Task.FromResult(false);
+        }
+
+        public virtual void Initialize(object navigationData)
+        {
         }
     }
 }

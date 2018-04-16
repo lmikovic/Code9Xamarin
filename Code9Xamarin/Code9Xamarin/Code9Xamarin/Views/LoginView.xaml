@@ -19,12 +19,18 @@
                 </StackLayout>
                 <StackLayout VerticalOptions="End" Grid.Row="1" Margin="0,20">
                     <Button Text="Login" Command="{Binding LoginCommand}" />
-                    <ActivityIndicator IsRunning="{Binding IsBusy}"/>
-                    <Label Text="Register">
+                    <Label>
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding RegisterCommand}"/>
                         </Label.GestureRecognizers>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Don't have an account? " />
+                                <Span Text="Sign up" ForegroundColor="Blue" />
+                            </FormattedString>
+                        </Label.FormattedText>
                     </Label>
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"/>
                 </StackLayout>
             </Grid>
         </ScrollView>

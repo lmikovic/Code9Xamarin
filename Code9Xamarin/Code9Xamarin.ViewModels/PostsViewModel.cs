@@ -1,12 +1,10 @@
-﻿
-using Code9Insta.API.Core.DTO;
-using Code9Xamarin.Core;
+﻿using Code9Xamarin.Core;
+using Code9Xamarin.Core.Mappers;
 using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -63,7 +61,7 @@ namespace Code9Xamarin.ViewModels
 
                 var allPosts = await _postService.GetAllPosts("", AppSettings.Token);
 
-                PostList = MapPosts(allPosts);
+                PostList = PostMapper.ToDomainEntities(allPosts);
             }
             catch (Exception ex)
             {
@@ -74,47 +72,6 @@ namespace Code9Xamarin.ViewModels
             {
                 IsBusy = false;
             }
-        }
-
-        //todo create mapper class
-        private List<Post> MapPosts(IEnumerable<PostDto> allPosts)
-        {
-            List<Post> result = new List<Post>();
-            foreach(var postDto in allPosts)
-            {
-                Post post = ConvertToPost(postDto);
-                result.Add(post);
-            }
-            return result;
-        }
-
-        private Post ConvertToPost(PostDto postDto)
-        {
-            var commentList = new List<Comment>();
-
-            foreach(var commentDto in postDto.Comments)
-            {
-                var comment = new Comment
-                {
-                    Id = commentDto.Id,
-                    Text = commentDto.Text
-                };
-                commentList.Add(comment);
-            }
-
-            return new Post
-            {
-                Comments = postDto.Comments.Count,
-                CreatedBy = postDto.CreatedBy,
-                CreatedOn = postDto.CreatedOn,
-                Description = postDto.Description,
-                Id = postDto.Id,
-                ImageData = ImageSource.FromStream(() => new MemoryStream(postDto.ImageData)),
-                IsLikedByUser = postDto.IsLikedByUser,
-                Likes = postDto.Likes,
-                Tags = postDto.Tags,
-                CommentList = commentList
-            };
         }
 
         private async Task<bool> LikeClick(Guid id)

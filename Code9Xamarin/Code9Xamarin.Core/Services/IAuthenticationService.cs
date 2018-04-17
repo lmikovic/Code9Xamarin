@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Code9Xamarin.Core.Services
@@ -10,5 +8,6 @@ namespace Code9Xamarin.Core.Services
         Task<bool> Login(string userName, string password);
         Task<bool> Logout();
         Task<bool> RenewSession(Guid userId, string refreshToken);
+        Task<bool> IsTokenExpired(string token);
     }
 }

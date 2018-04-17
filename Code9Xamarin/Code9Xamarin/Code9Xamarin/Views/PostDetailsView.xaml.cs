@@ -7,10 +7,26 @@ namespace Code9Xamarin.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class PostDetailsView : ContentPage
 	{
-		public PostDetailsView ()
+        object _parameter;
+        PostDetailsViewModel _postDetailsViewModel;
+
+        public PostDetailsView ()
 		{
 			InitializeComponent ();
-            BindingContext = new PostDetailsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.PostService);
+            _postDetailsViewModel = new PostDetailsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.PostService);
+            BindingContext = _postDetailsViewModel;
         }
-	}
+
+        public PostDetailsView(object parameter) : this()
+        {
+            _parameter = parameter;
+
+            if (_parameter != null)
+            {
+                GalleryIcon.IsEnabled = false;
+                CameraIcon.IsEnabled = false;
+                _postDetailsViewModel.Initialize(_parameter);
+            }
+        }
+    }
 }

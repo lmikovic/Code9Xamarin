@@ -6,10 +6,12 @@ namespace Code9Xamarin.Core.Services
     public class CommentService : ICommentService
     {
         private readonly IRequestService _requestService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public CommentService(IRequestService requestService)
+        public CommentService(IRequestService requestService, IAuthenticationService authenticationService)
         {
             _requestService = requestService;
+            _authenticationService = authenticationService;
         }
 
         public async Task<bool> CreateComment(Guid postId, string text, string token)
@@ -22,7 +24,12 @@ namespace Code9Xamarin.Core.Services
 
             string uri = builder.ToString();
 
-            string message = await _requestService.PostAsync<string, string>(uri, null, token);
+            if (await _authenticationService.IsTokenExpired(token))
+            {
+                await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
+            }
+
+            await _requestService.PostAsync<string, string>(uri, null, token);
 
             return await Task.FromResult(true);
         }
@@ -36,6 +43,11 @@ namespace Code9Xamarin.Core.Services
             };
 
             string uri = builder.ToString();
+
+            if (await _authenticationService.IsTokenExpired(token))
+            {
+                await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
+            }
 
             await _requestService.DeleteAsync<string, string>(uri, null, token);
 

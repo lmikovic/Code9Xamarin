@@ -1,4 +1,5 @@
-﻿using Code9Xamarin.Core.Services;
+﻿using Code9Xamarin.Core;
+using Code9Xamarin.Core.Services;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -12,11 +13,14 @@ namespace Code9Xamarin.ViewModels
         public Command RegisterCommand { get; }
 
         private readonly IAuthenticationService _authenticationService;
+        private readonly IProfileService _profileService;
 
-        public LoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService)
+        public LoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IProfileService profileService)
             : base(navigationService)
         {
             _authenticationService = authenticationService;
+            _profileService = profileService;
+
             LoginCommand = new Command(async () => await Login(),
                 () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
 
@@ -66,6 +70,7 @@ namespace Code9Xamarin.ViewModels
                 IsBusy = true;
 
                 await _authenticationService.Login(UserName, Password);
+                await _profileService.GetProfile(AppSettings.Token);
                 await _navigationService.NavigateAsync<PostsViewModel>();
             }
             catch (Exception ex)

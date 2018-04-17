@@ -1,5 +1,6 @@
 ﻿using Plugin.Settings;
 using Plugin.Settings.Abstractions;
+using System;
 
 namespace Code9Xamarin.Core
 {
@@ -30,6 +31,18 @@ namespace Code9Xamarin.Core
             get => Settings.GetValueOrDefault(nameof(RefreshToken), default(string));
 
             set => Settings.AddOrUpdateValue(nameof(RefreshToken), value);
+        }
+
+        public static Guid UserId
+        {
+            get => Settings.GetValueOrDefault(nameof(UserId), default(Guid));
+
+            set => Settings.AddOrUpdateValue(nameof(UserId), value);
+        }
+
+        public static void RemoveUserId()
+        {
+            Settings.Remove(nameof(UserId));
         }
 
         public static void RemoveToken()

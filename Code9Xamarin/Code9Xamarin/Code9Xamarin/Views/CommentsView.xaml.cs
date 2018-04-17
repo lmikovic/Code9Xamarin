@@ -20,11 +20,7 @@ namespace Code9Xamarin.Views
         public CommentsView(object parameter) : this()
         {
             _parameter = parameter;
-        }
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
             if (_parameter != null)
             {
                 _commentsViewModel.Initialize(_parameter);

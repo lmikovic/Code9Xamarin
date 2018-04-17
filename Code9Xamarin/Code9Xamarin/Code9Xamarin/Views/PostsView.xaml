@@ -68,7 +68,11 @@
                                 <Image HeightRequest="200"
                                    x:Name="ImageContainer"
                                    Source="{Binding ImageData}"
-                                   Grid.Row="3" />
+                                   Grid.Row="3">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference Name=PostsListView}}" CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
                                 <StackLayout Orientation="Horizontal"
                                      Grid.Row="4"
                                      Margin="20,0">
@@ -136,7 +140,7 @@
                                     </Grid>
                                     <Grid Grid.Column="2">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=PostsListView}}" />
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=PostsListView}}" CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
                                         <Image x:Name="DeleteIcon"
                                                HeightRequest="24"

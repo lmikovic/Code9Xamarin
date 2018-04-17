@@ -1,5 +1,6 @@
 ﻿using Code9Insta.API.Core.DTO;
 using Code9Xamarin.Core;
+using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
@@ -24,20 +25,20 @@ namespace Code9Xamarin.ViewModels
 
             CameraCommand = new Command(async () => await CameraClick(), () => !IsBusy);
             GalleryCommand = new Command(async () => await GalleryClick(), () => !IsBusy);
-            SaveCommand = new Command(async () => await SaveClick(), () => !IsBusy && PhotoStream != null);
+            SaveCommand = new Command(async () => await SaveClick(), () => !IsBusy && PostImage != null);
         }
 
-        private Stream _photoStream;
-        public Stream PhotoStream
+        public override void Initialize(object navigationData)
         {
-            get { return _photoStream; }
-            set
-            {
-                _photoStream = value;
-                OnPropertyChanged();
-                SaveCommand.ChangeCanExecute();
-            }
+            var post = navigationData as Post;
+
+            PostImage = post.ImageData;
+            Description = post.Description;
+            _postId = post.Id;
         }
+
+        private Guid _postId;
+        private Stream _photoStream;
 
         private bool _isBusy;
         public bool IsBusy
@@ -72,6 +73,7 @@ namespace Code9Xamarin.ViewModels
             {
                 _postImage = value;
                 OnPropertyChanged();
+                SaveCommand.ChangeCanExecute();
             }
         }
 
@@ -95,7 +97,7 @@ namespace Code9Xamarin.ViewModels
 
                 if (photo != null)
                 {
-                    PhotoStream = photo.GetStream();
+                    _photoStream = photo.GetStream();
                     PostImage = ImageSource.FromStream(() =>
                     {
                         var stream = photo.GetStream();
@@ -130,7 +132,7 @@ namespace Code9Xamarin.ViewModels
 
                 if (photo != null)
                 {
-                    PhotoStream = photo.GetStream();
+                    _photoStream = photo.GetStream();
                     PostImage = ImageSource.FromStream(() =>
                     {
                         var stream = photo.GetStream();
@@ -145,12 +147,12 @@ namespace Code9Xamarin.ViewModels
 
         private async Task SaveClick()
         {
-            if (PhotoStream != null)
+            if (_photoStream != null)
             {
                 byte[] byteImage;
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    PhotoStream.CopyTo(ms);
+                    _photoStream.CopyTo(ms);
                     byteImage = ms.ToArray();
                 }
 
@@ -161,6 +163,18 @@ namespace Code9Xamarin.ViewModels
                 };
 
                 await _postService.CreatePost(newPost, AppSettings.Token);
+                await _navigationService.NavigateAsync<PostsViewModel>();
+            }
+
+            //Edit
+            if(_postId != default(Guid))
+            {
+                EditPostDto  newPost = new EditPostDto
+                {
+                    Description = Description
+                };
+
+                await _postService.EditPost(newPost, _postId, AppSettings.Token);
                 await _navigationService.NavigateAsync<PostsViewModel>();
             }
         }

@@ -4,6 +4,7 @@ using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace Code9Xamarin.ViewModels
         public Command<Guid> LikeCommand { get; }
         public Command CreatePostCommand { get; }
         public Command<Guid> CommentCommand { get; }
+        public Command<Guid> DeleteCommand { get; }
+        public Command<Guid> EditCommand { get; }
 
         public PostsViewModel(INavigationService navigationService, IPostService postService)
             : base(navigationService)
@@ -27,10 +30,12 @@ namespace Code9Xamarin.ViewModels
             LikeCommand = new Command<Guid>(async (id) => await LikeClick(id), (id) => !IsBusy);
             CreatePostCommand = new Command(async () => await CreatePost(), () => !IsBusy);
             CommentCommand = new Command<Guid>(async (id) => await CommentClick(id), (id) => !IsBusy);
+            DeleteCommand = new Command<Guid>(async (id) => await DeleteClick(id), (id) => !IsBusy);
+            EditCommand = new Command<Guid>(async (id) => await EditClick(id), (id) => !IsBusy);
         }
 
-        private List<Post> _postList;
-        public List<Post> PostList
+        private ObservableCollection<Post> _postList;
+        public ObservableCollection<Post> PostList
         {
             get { return _postList; }
             set
@@ -50,6 +55,7 @@ namespace Code9Xamarin.ViewModels
                 OnPropertyChanged();
                 CreatePostCommand.ChangeCanExecute();
                 LikeCommand.ChangeCanExecute();
+                DeleteCommand.ChangeCanExecute();
             }
         }
 
@@ -61,7 +67,7 @@ namespace Code9Xamarin.ViewModels
 
                 var allPosts = await _postService.GetAllPosts("", AppSettings.Token);
 
-                PostList = PostMapper.ToDomainEntities(allPosts);
+                PostList = new ObservableCollection<Post>(PostMapper.ToDomainEntities(allPosts));
             }
             catch (Exception ex)
             {
@@ -93,6 +99,19 @@ namespace Code9Xamarin.ViewModels
         {
             var selectedPost = PostList.Single(x => x.Id == id);
             await _navigationService.NavigateAsync<CommentsViewModel>(selectedPost);
+        }
+
+        private async Task EditClick(Guid id)
+        {
+            var selectedPost = PostList.Single(x => x.Id == id);
+            await _navigationService.NavigateAsync<PostDetailsViewModel>(selectedPost);
+        }
+
+        private async Task DeleteClick(Guid id)
+        {
+            await _postService.DeletePost(id, AppSettings.Token);
+            var deletedPost = PostList.Single(x => x.Id == id);
+            PostList.Remove(deletedPost);
         }
     }
 }

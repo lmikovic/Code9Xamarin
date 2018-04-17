@@ -11,7 +11,7 @@ namespace Code9Xamarin.Views
 		{
 			InitializeComponent ();
             
-            BindingContext = new LoginViewModel(AppBootstrapper.NavigationService, AppBootstrapper.AuthenticationService);
+            BindingContext = new LoginViewModel(AppBootstrapper.NavigationService, AppBootstrapper.AuthenticationService, AppBootstrapper.ProfileService);
         }
 	}
 }

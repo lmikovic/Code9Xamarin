@@ -104,9 +104,14 @@
     <None Include="Code9Xamarin.UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\avatar.png" />
+    <Content Include="Assets\calendar.png" />
+    <Content Include="Assets\camera.png" />
     <Content Include="Assets\cloud.png" />
+    <Content Include="Assets\delete.png" />
     <Content Include="Assets\like.png" />
-    <Content Include="Assets\share.png" />
+    <Content Include="Assets\like2.png" />
+    <Content Include="Assets\picture.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\LockScreenLogo.scale-125.png" />

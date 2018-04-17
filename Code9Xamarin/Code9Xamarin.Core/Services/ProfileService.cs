@@ -7,10 +7,12 @@ namespace Code9Xamarin.Core.Services
     public class ProfileService : IProfileService
     {
         private readonly IRequestService _requestService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public ProfileService(IRequestService requestService)
+        public ProfileService(IRequestService requestService, IAuthenticationService authenticationService)
         {
             _requestService = requestService;
+            _authenticationService = authenticationService;
         }
 
         public async Task<GetProfileDto> GetProfile(string token)
@@ -22,7 +24,16 @@ namespace Code9Xamarin.Core.Services
 
             string uri = builder.ToString();
 
-            return await _requestService.GetAsync<GetProfileDto>(uri, token);
+            if (await _authenticationService.IsTokenExpired(token))
+            {
+                await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
+            }
+
+            var profile = await _requestService.GetAsync<GetProfileDto>(uri, token);
+
+            AppSettings.UserId = profile.UserId;
+
+            return profile;
         }
 
         public async Task<bool> CreateProfile(CreateProfileDto profile)

@@ -1,9 +1,8 @@
 ﻿using Code9Xamarin.Core;
 using Code9Xamarin.Core.Mappers;
 using Code9Xamarin.Core.Models;
-using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -71,8 +70,7 @@ namespace Code9Xamarin.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[Home] Error: {ex}");
-                //await DialogService.ShowAlertAsync(Resources.ExceptionMessage, Resources.ExceptionTitle, Resources.DialogOk);
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
             {
@@ -82,36 +80,103 @@ namespace Code9Xamarin.ViewModels
 
         private async Task<bool> LikeClick(Guid id)
         {
-            await _postService.LikePost(id, AppSettings.Token);
-            var postDto = await _postService.GetPost(id, AppSettings.Token);
-            PostList.First(x => x.Id == id).Likes = postDto.Likes;
-            PostList.First(x => x.Id == id).IsLikedByUser = postDto.IsLikedByUser;
+            try
+            {
+                IsBusy = true;
 
-            return await Task.FromResult(true);
+                await _postService.LikePost(id, AppSettings.Token);
+                var postDto = await _postService.GetPost(id, AppSettings.Token);
+                PostList.First(x => x.Id == id).Likes = postDto.Likes;
+                PostList.First(x => x.Id == id).IsLikedByUser = postDto.IsLikedByUser;
+
+                return await Task.FromResult(true);
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                return await Task.FromResult(false);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
         }
 
         private async Task CreatePost()
         {
-            await _navigationService.NavigateAsync<PostDetailsViewModel>();
+            try
+            {
+                IsBusy = true;
+                await _navigationService.NavigateAsync<PostDetailsViewModel>();
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task CommentClick(Guid id)
         {
-            var selectedPost = PostList.Single(x => x.Id == id);
-            await _navigationService.NavigateAsync<CommentsViewModel>(selectedPost);
+            try
+            {
+                IsBusy = true;
+                await _navigationService.NavigateAsync<CommentsViewModel>(id);
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task EditClick(Guid id)
         {
-            var selectedPost = PostList.Single(x => x.Id == id);
-            await _navigationService.NavigateAsync<PostDetailsViewModel>(selectedPost);
+            try
+            {
+                IsBusy = true;
+                var selectedPost = PostList.Single(x => x.Id == id);
+                await _navigationService.NavigateAsync<PostDetailsViewModel>(selectedPost);
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task DeleteClick(Guid id)
         {
-            await _postService.DeletePost(id, AppSettings.Token);
-            var deletedPost = PostList.Single(x => x.Id == id);
-            PostList.Remove(deletedPost);
+            try
+            {
+                var answer = await Application.Current.MainPage.DisplayAlert("Delete", "Are you sure you want to delete post", "Yes", "No");
+
+                if (answer)
+                {
+                    IsBusy = true;
+                    await _postService.DeletePost(id, AppSettings.Token);
+                    var deletedPost = PostList.Single(x => x.Id == id);
+                    PostList.Remove(deletedPost);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

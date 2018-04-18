@@ -1,5 +1,5 @@
 ﻿using Code9Xamarin.Core;
-using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -75,8 +75,7 @@ namespace Code9Xamarin.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[Login] Error: {ex}");
-                //await DialogService.ShowAlertAsync(Resources.ExceptionMessage, Resources.ExceptionTitle, Resources.DialogOk);
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
             {
@@ -86,7 +85,19 @@ namespace Code9Xamarin.ViewModels
 
         private async Task RegisterNewUser()
         {
-            await _navigationService.NavigateAsync<RegisterViewModel>();
+            try
+            {
+                IsBusy = true;
+                await _navigationService.NavigateAsync<RegisterViewModel>();
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

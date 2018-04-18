@@ -12,7 +12,7 @@ namespace Code9Xamarin.Views
 
         public CommentsView ()
 		{
-			InitializeComponent ();
+			InitializeComponent();
             _commentsViewModel = new CommentsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.CommentService);
             BindingContext = _commentsViewModel;
         }
@@ -20,10 +20,13 @@ namespace Code9Xamarin.Views
         public CommentsView(object parameter) : this()
         {
             _parameter = parameter;
+        }
 
+        protected override async void OnAppearing()
+        {
             if (_parameter != null)
             {
-                _commentsViewModel.Initialize(_parameter);
+                await _commentsViewModel.InitializeAsync(_parameter);
             }
         }
     }

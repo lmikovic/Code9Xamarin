@@ -1,4 +1,5 @@
 ﻿using Code9Insta.API.Core.DTO;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 

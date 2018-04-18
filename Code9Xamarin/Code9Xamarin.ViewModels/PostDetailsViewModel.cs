@@ -1,10 +1,11 @@
 ﻿using Code9Insta.API.Core.DTO;
 using Code9Xamarin.Core;
 using Code9Xamarin.Core.Models;
-using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -30,11 +31,24 @@ namespace Code9Xamarin.ViewModels
 
         public override void Initialize(object navigationData)
         {
-            var post = navigationData as Post;
+            try
+            {
+                IsBusy = true;
 
-            PostImage = post.ImageData;
-            Description = post.Description;
-            _postId = post.Id;
+                var post = navigationData as Post;
+
+                PostImage = post.ImageData;
+                Description = post.Description;
+                _postId = post.Id;
+            }
+            catch (Exception ex)
+            {
+                Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private Guid _postId;
@@ -77,105 +91,136 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        async Task CameraClick()
+        private async Task CameraClick()
         {
-            IsBusy = true;
-
-            PostImage = null;
-
-            await CrossMedia.Current.Initialize();
-
-            if (CrossMedia.Current.IsCameraAvailable || CrossMedia.Current.IsTakePhotoSupported)
+            try
             {
-                MediaFile photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-                {
-                    Name = $"post-{DateTime.Now.ToString("ddMMyyyyTHHmmss")}.jpg",
-                    MaxWidthHeight = 1000,
-                    PhotoSize = PhotoSize.MaxWidthHeight,
-                    SaveToAlbum = true
-                });
+                IsBusy = true;
 
-                if (photo != null)
+                PostImage = null;
+
+                await CrossMedia.Current.Initialize();
+
+                if (CrossMedia.Current.IsCameraAvailable || CrossMedia.Current.IsTakePhotoSupported)
                 {
-                    _photoStream = photo.GetStream();
-                    PostImage = ImageSource.FromStream(() =>
+                    MediaFile photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
                     {
-                        var stream = photo.GetStream();
-                        photo.Dispose();
-                        return stream;
+                        Name = $"post-{DateTime.Now.ToString("ddMMyyyyTHHmmss")}.jpg",
+                        MaxWidthHeight = 1000,
+                        PhotoSize = PhotoSize.MaxWidthHeight,
+                        SaveToAlbum = true
                     });
+
+                    if (photo != null)
+                    {
+                        _photoStream = photo.GetStream();
+                        PostImage = ImageSource.FromStream(() =>
+                        {
+                            var stream = photo.GetStream();
+                            photo.Dispose();
+                            return stream;
+                        });
+                    }
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Camera unavailable.", "OK");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Camera unavailable.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
-
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
-        async Task GalleryClick()
+        private async Task GalleryClick()
         {
-            IsBusy = true;
-
-            PostImage = null;
-
-            await CrossMedia.Current.Initialize();
-
-            if (CrossMedia.Current.IsPickPhotoSupported)
+            try
             {
-                MediaFile photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
-                {
-                    MaxWidthHeight = 1000,
-                    PhotoSize = PhotoSize.MaxWidthHeight
-                });
+                IsBusy = true;
 
-                if (photo != null)
+                PostImage = null;
+
+                await CrossMedia.Current.Initialize();
+
+                if (CrossMedia.Current.IsPickPhotoSupported)
                 {
-                    _photoStream = photo.GetStream();
-                    PostImage = ImageSource.FromStream(() =>
+                    MediaFile photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
                     {
-                        var stream = photo.GetStream();
-                        photo.Dispose();
-                        return stream;
+                        MaxWidthHeight = 1000,
+                        PhotoSize = PhotoSize.MaxWidthHeight
                     });
+
+                    if (photo != null)
+                    {
+                        _photoStream = photo.GetStream();
+                        PostImage = ImageSource.FromStream(() =>
+                        {
+                            var stream = photo.GetStream();
+                            photo.Dispose();
+                            return stream;
+                        });
+                    }
                 }
             }
-
-            IsBusy = false;
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task SaveClick()
         {
-            if (_photoStream != null)
+            try
             {
-                byte[] byteImage;
-                using (MemoryStream ms = new MemoryStream())
+                IsBusy = true;
+
+                if (_photoStream != null)
                 {
-                    _photoStream.CopyTo(ms);
-                    byteImage = ms.ToArray();
+                    byte[] byteImage;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        _photoStream.CopyTo(ms);
+                        byteImage = ms.ToArray();
+                    }
+
+                    CreatePostDto newPost = new CreatePostDto
+                    {
+                        Description = Description,
+                        ImageData = byteImage
+                    };
+
+                    await _postService.CreatePost(newPost, AppSettings.Token);
+                    await _navigationService.NavigateAsync<PostsViewModel>();
                 }
 
-                CreatePostDto newPost = new CreatePostDto
+                //Edit
+                if (_postId != default(Guid))
                 {
-                    Description = Description,
-                    ImageData = byteImage
-                };
+                    EditPostDto newPost = new EditPostDto
+                    {
+                        Description = Description
+                    };
 
-                await _postService.CreatePost(newPost, AppSettings.Token);
-                await _navigationService.NavigateAsync<PostsViewModel>();
+                    await _postService.EditPost(newPost, _postId, AppSettings.Token);
+                    await _navigationService.NavigateAsync<PostsViewModel>();
+                }
             }
-
-            //Edit
-            if(_postId != default(Guid))
+            catch (Exception ex)
             {
-                EditPostDto  newPost = new EditPostDto
-                {
-                    Description = Description
-                };
-
-                await _postService.EditPost(newPost, _postId, AppSettings.Token);
-                await _navigationService.NavigateAsync<PostsViewModel>();
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

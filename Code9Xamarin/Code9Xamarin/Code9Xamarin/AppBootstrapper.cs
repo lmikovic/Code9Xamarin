@@ -1,4 +1,5 @@
 ﻿using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using Code9Xamarin.ViewModels;
 using Code9Xamarin.Views;
 

@@ -11,21 +11,61 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ListView x:Name="CommentsListView" ItemsSource="{Binding Comments}" HasUnevenRows="true" Grid.Row="0" SeparatorColor="Black" Margin="0,10">
+            <ListView x:Name="CommentsListView" ItemsSource="{Binding Comments}" HasUnevenRows="true" Grid.Row="0" Margin="0,10" SeparatorVisibility="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid Margin="0,10">
+                            <Grid Margin="0,10" BackgroundColor="AliceBlue">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="50" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="{Binding Text}" Grid.Column="0"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,5">
+                                    <Image x:Name="AvatarIcon"
+                                               HeightRequest="24"
+                                               WidthRequest="24"
+                                               HorizontalOptions="Start"
+                                               Margin="20,0,0,0">
+                                        <Image.Source>
+                                            <OnPlatform x:TypeArguments="ImageSource">
+                                                <On Platform="UWP">Assets/avatar.png</On>
+                                                <On Platform="iOS, Android">avatar.png</On>
+                                            </OnPlatform>
+                                        </Image.Source>
+                                    </Image>
+                                    <Label x:Name="UserNameText"
+                                           VerticalOptions="CenterAndExpand"
+                                           LineBreakMode="TailTruncation"
+                                           Text="{Binding Path=UserId, StringFormat='{0:D}'}" />
+                                    <Image x:Name="CalendarIcon"
+                                                   HeightRequest="24"
+                                                   HorizontalOptions="EndAndExpand"
+                                                   WidthRequest="24">
+                                        <Image.Source>
+                                            <OnPlatform x:TypeArguments="ImageSource">
+                                                <On Platform="UWP">Assets/calendar.png</On>
+                                                <On Platform="iOS, Android">calendar.png</On>
+                                            </OnPlatform>
+                                        </Image.Source>
+                                    </Image>
+                                    <Label x:Name="DateTime"
+                                           VerticalOptions="CenterAndExpand"
+                                           HorizontalOptions="End"
+                                           LineBreakMode="TailTruncation"
+                                           Margin="0,0,20,0"
+                                           Text="{Binding Path=CreatedOn, StringFormat='{0:d}'}" />
+                                </StackLayout>
+                                <Label Text="{Binding Text}" Grid.Row="1" Grid.Column="0" />
                                 <Image x:Name="DeleteIcon"
                                        HeightRequest="24"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center"
                                        WidthRequest="24"
+                                       Grid.Row="1"
                                        Grid.Column="1">
                                     <Image.Source>
                                         <OnPlatform x:TypeArguments="ImageSource">
@@ -43,7 +83,7 @@
                 </ListView.ItemTemplate>
             </ListView>
             <StackLayout Orientation="Vertical" Grid.Row="1" VerticalOptions="End">
-                <Editor HeightRequest="70" BackgroundColor="LightGray" Text="{Binding Text}"/>
+                <Editor HeightRequest="70" BackgroundColor="AliceBlue" Text="{Binding Text}" />
                 <Button Text="Save" Command="{Binding SaveCommand}" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}"/>
             </StackLayout>

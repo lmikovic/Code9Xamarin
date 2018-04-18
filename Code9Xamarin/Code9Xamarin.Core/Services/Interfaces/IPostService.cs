@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Code9Xamarin.Core.Services
+namespace Code9Xamarin.Core.Services.Interfaces
 {
     public interface IPostService
     {

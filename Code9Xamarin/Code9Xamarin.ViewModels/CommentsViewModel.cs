@@ -1,8 +1,10 @@
 ﻿using Code9Xamarin.Core;
+using Code9Xamarin.Core.Mappers;
 using Code9Xamarin.Core.Models;
-using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -23,14 +25,26 @@ namespace Code9Xamarin.ViewModels
 
             SaveCommand = new Command(async () => await SaveClick(), () => !IsBusy && !string.IsNullOrEmpty(Text));
             DeleteCommand = new Command<Guid>(async (id) => await DeleteClick(id), (id) => !IsBusy);
-            Comments = new List<Comment>();
         }
 
-        public override void Initialize(object navigationData)
+        public async override Task InitializeAsync(object navigationData)
         {
-            var post = navigationData as Post;
-            Comments = post.CommentList;
-            _postId = post.Id;
+            try
+            {
+                IsBusy = true;
+
+                _postId = (Guid)navigationData;
+                var comments = await _commentService.GetPostComments(_postId, AppSettings.Token);
+                Comments = new ObservableCollection<Comment>(CommentMapper.ToDomainEntities(comments));
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private bool _isBusy;
@@ -57,8 +71,8 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private List<Comment> _comments;
-        public List<Comment> Comments
+        private ObservableCollection<Comment> _comments;
+        public ObservableCollection<Comment> Comments
         {
             get { return _comments; }
             set
@@ -70,13 +84,48 @@ namespace Code9Xamarin.ViewModels
 
         private async Task SaveClick()
         {
-            await _commentService.CreateComment(_postId, Text, AppSettings.Token);
-            Text = "";
+            try
+            {
+                IsBusy = true;
+
+                await _commentService.CreateComment(_postId, Text, AppSettings.Token);
+                Text = "";
+                var comments = await _commentService.GetPostComments(_postId, AppSettings.Token);
+                Comments = new ObservableCollection<Comment>(CommentMapper.ToDomainEntities(comments));
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task DeleteClick(Guid id)
         {
-            await _commentService.DeleteComment(id, AppSettings.Token);
+            try
+            {
+                var answer = await Application.Current.MainPage.DisplayAlert("Delete", "Are you sure you want to delete comment", "Yes", "No");
+
+                if (answer)
+                {
+                    IsBusy = true;
+
+                    await _commentService.DeleteComment(id, AppSettings.Token);
+                    var comments = await _commentService.GetPostComments(_postId, AppSettings.Token);
+                    Comments = new ObservableCollection<Comment>(CommentMapper.ToDomainEntities(comments));
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

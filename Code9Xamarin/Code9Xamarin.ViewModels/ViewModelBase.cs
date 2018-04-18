@@ -1,4 +1,4 @@
-﻿using Code9Xamarin.Core.Services;
+﻿using Code9Xamarin.Core.Services.Interfaces;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 

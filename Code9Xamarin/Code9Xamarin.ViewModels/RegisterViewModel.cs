@@ -1,5 +1,5 @@
 ﻿using Code9Insta.API.Core.DTO;
-using Code9Xamarin.Core.Services;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -103,8 +103,7 @@ namespace Code9Xamarin.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[Register] Error: {ex}");
-                //await DialogService.ShowAlertAsync(Resources.ExceptionMessage, Resources.ExceptionTitle, Resources.DialogOk);
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
             finally
             {

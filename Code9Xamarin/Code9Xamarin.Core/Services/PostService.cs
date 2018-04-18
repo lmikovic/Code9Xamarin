@@ -1,7 +1,7 @@
 ﻿using Code9Insta.API.Core.DTO;
+using Code9Xamarin.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Code9Xamarin.Core.Services

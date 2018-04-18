@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Code9Xamarin.Core.Services.Interfaces;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using RestSharp;

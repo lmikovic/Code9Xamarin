@@ -71,7 +71,7 @@ namespace Code9Xamarin.ViewModels
 
                 await _authenticationService.Login(UserName, Password);
                 await _profileService.GetProfile(AppSettings.Token);
-                await _navigationService.NavigateAsync<PostsViewModel>();
+                _navigationService.SetRootPage(typeof(PostsViewModel));
             }
             catch (Exception ex)
             {

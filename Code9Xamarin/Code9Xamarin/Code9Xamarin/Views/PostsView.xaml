@@ -8,10 +8,13 @@
             <local:InverseBoolConverter x:Key="InverseBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="CreatePost" Order="Secondary" Text="Create post" Command="{Binding CreatePostCommand}"/>
+        <ToolbarItem Name="LogOut" Order="Secondary" Text="Log out" Command="{Binding LogOutCommand}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
-            <Button Text="Create post" Command="{Binding CreatePostCommand}" />
             <ListView x:Name="PostsListView" ItemsSource="{Binding PostList}" HasUnevenRows="true" SeparatorVisibility="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>

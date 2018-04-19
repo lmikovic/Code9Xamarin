@@ -14,20 +14,24 @@ namespace Code9Xamarin.ViewModels
     public class PostsViewModel : ViewModelBase
     {
         private readonly IPostService _postService;
+        private readonly IAuthenticationService _authenticationService;
 
         public Command<Guid> LikeCommand { get; }
         public Command CreatePostCommand { get; }
+        public Command LogOutCommand { get; }
         public Command<Guid> CommentCommand { get; }
         public Command<Guid> DeleteCommand { get; }
         public Command<Guid> EditCommand { get; }
 
-        public PostsViewModel(INavigationService navigationService, IPostService postService)
+        public PostsViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IPostService postService)
             : base(navigationService)
         {
             _postService = postService;
+            _authenticationService = authenticationService;
 
             LikeCommand = new Command<Guid>(async (id) => await LikeClick(id), (id) => !IsBusy);
             CreatePostCommand = new Command(async () => await CreatePost(), () => !IsBusy);
+            LogOutCommand = new Command(async () => await LogOut(), () => !IsBusy);
             CommentCommand = new Command<Guid>(async (id) => await CommentClick(id), (id) => !IsBusy);
             DeleteCommand = new Command<Guid>(async (id) => await DeleteClick(id), (id) => !IsBusy);
             EditCommand = new Command<Guid>(async (id) => await EditClick(id), (id) => !IsBusy);
@@ -109,6 +113,24 @@ namespace Code9Xamarin.ViewModels
             {
                 IsBusy = true;
                 await _navigationService.NavigateAsync<PostDetailsViewModel>();
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task LogOut()
+        {
+            try
+            {
+                IsBusy = true;
+                await _authenticationService.Logout();
+                _navigationService.SetRootPage(typeof(LoginViewModel));
             }
             catch (Exception ex)
             {

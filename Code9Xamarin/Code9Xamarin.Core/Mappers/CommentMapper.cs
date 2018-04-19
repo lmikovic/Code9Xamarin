@@ -24,7 +24,7 @@ namespace Code9Xamarin.Core.Mappers
                 Id = commentDto.Id,
                 CreatedOn = commentDto.CreatedOn,
                 Text = commentDto.Text,
-                UserId = commentDto.UserId
+                CreatedBy = commentDto.UserId.ToString()
             };
         }
     }

@@ -12,7 +12,7 @@ namespace Code9Xamarin.Views
         public PostsView()
 		{
 			InitializeComponent ();
-            postsViewModel = new PostsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.PostService);
+            postsViewModel = new PostsViewModel(AppBootstrapper.NavigationService, AppBootstrapper.AuthenticationService, AppBootstrapper.PostService);
             BindingContext = postsViewModel;
 
             PostsListView.ItemSelected += (sender, e) =>

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Code9Xamarin.Core.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -29,7 +28,7 @@ namespace Code9Xamarin.Core.Services
 
         private async Task NavigateToAsync(Type viewModelType, object parameter, bool animated)
         {
-            Page page = CreatePage(viewModelType);
+            Page page = CreatePage(viewModelType, parameter);
 
             var navigationPage = Application.Current.MainPage as NavigationPage;
             if (navigationPage != null)
@@ -48,7 +47,7 @@ namespace Code9Xamarin.Core.Services
             Application.Current.MainPage = new NavigationPage(page);
         }
 
-        private Page CreatePage(Type viewModelType)
+        private Page CreatePage(Type viewModelType, object parameter = null)
         {
             Type pageType = _pagesByType.FirstOrDefault(x => x.Value == viewModelType).Key;
             if (pageType == null)
@@ -56,7 +55,8 @@ namespace Code9Xamarin.Core.Services
                 throw new Exception($"Cannot locate page type for {viewModelType.Name}");
             }
 
-            Page page = Activator.CreateInstance(pageType) as Page;
+            Page page = parameter != null ? Activator.CreateInstance(pageType, parameter) as Page :
+                Activator.CreateInstance(pageType) as Page;
             return page;
         }
     }

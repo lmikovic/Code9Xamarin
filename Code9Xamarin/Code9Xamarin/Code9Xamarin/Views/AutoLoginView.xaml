@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Code9Xamarin.Views.AutoLoginView">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label FontSize="20"
+                   Text="Loading..."
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

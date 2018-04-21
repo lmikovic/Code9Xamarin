@@ -22,6 +22,7 @@ namespace Code9Xamarin
             NavigationService.Register<RegisterView, RegisterViewModel>();
             NavigationService.Register<PostDetailsView, PostDetailsViewModel>();
             NavigationService.Register<CommentsView, CommentsViewModel>();
+            NavigationService.Register<AutoLoginView, AutoLoginViewModel>();
         }
 
     }

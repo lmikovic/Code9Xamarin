@@ -13,8 +13,7 @@ namespace Code9Xamarin
             var boot = new AppBootstrapper();
             boot.Initialize();
 
-            MainPage = new LoginView();
-            AppBootstrapper.NavigationService.SetRootPage(typeof(LoginViewModel));
+            MainPage = new AutoLoginView();
         }
 
         protected override void OnStart ()

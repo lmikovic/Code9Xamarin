@@ -1,5 +1,5 @@
-﻿using Code9Xamarin.Core;
-using Code9Xamarin.Core.Services.Interfaces;
+﻿using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -11,7 +11,11 @@ namespace Code9Xamarin.ViewModels
         private readonly IAuthenticationService _authenticationService;
 
         public AutoLoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService)
-            : base(navigationService)
+            : this(navigationService, authenticationService, new RuntimeContext())
+        {}
+
+        public AutoLoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IRuntimeContext runtimeContext)
+            : base(navigationService, runtimeContext)
         {
             _authenticationService = authenticationService;
         }
@@ -20,11 +24,11 @@ namespace Code9Xamarin.ViewModels
         {
             try
             {
-                if (AppSettings.Token != null && AppSettings.UserId != default(Guid) && AppSettings.RefreshToken != null)
+                if (_runtimeContext.Token != null && _runtimeContext.UserId != default(Guid) && _runtimeContext.RefreshToken != null)
                 {
-                    if (await _authenticationService.IsTokenExpired(AppSettings.Token))
+                    if (await _authenticationService.IsTokenExpired(_runtimeContext.Token))
                     {
-                        await _authenticationService.RenewSession(AppSettings.UserId, AppSettings.RefreshToken);
+                        await _authenticationService.RenewSession(_runtimeContext.UserId, _runtimeContext.RefreshToken);
                     }
 
                     _navigationService.SetRootPage(typeof(PostsViewModel));

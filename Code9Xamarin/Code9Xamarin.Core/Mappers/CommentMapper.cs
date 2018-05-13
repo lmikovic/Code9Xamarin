@@ -1,12 +1,13 @@
 ﻿using Code9Insta.API.Core.DTO;
+using Code9Xamarin.Core.Mappers.Interfaces;
 using Code9Xamarin.Core.Models;
 using System.Collections.Generic;
 
 namespace Code9Xamarin.Core.Mappers
 {
-    public class CommentMapper
+    public class CommentMapper : IMapper<GetCommentDto, Comment>
     {
-        public static List<Comment> ToDomainEntities(IEnumerable<GetCommentDto> comments)
+        public List<Comment> ToDomainEntities(IEnumerable<GetCommentDto> comments)
         {
             List<Comment> result = new List<Comment>();
             foreach (var commentDto in comments)
@@ -17,7 +18,7 @@ namespace Code9Xamarin.Core.Mappers
             return result;
         }
 
-        public static Comment ToDomainEntity(GetCommentDto commentDto)
+        public Comment ToDomainEntity(GetCommentDto commentDto)
         {
             return new Comment
             {

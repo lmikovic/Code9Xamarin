@@ -1,4 +1,5 @@
 ﻿using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -7,10 +8,17 @@ namespace Code9Xamarin.ViewModels
     public abstract class ViewModelBase : BindableObject
     {
         protected readonly INavigationService _navigationService;
+        protected readonly IRuntimeContext _runtimeContext;
 
         public ViewModelBase(INavigationService navigationService)
         {
             _navigationService = navigationService;
+        }
+
+        public ViewModelBase(INavigationService navigationService, IRuntimeContext runtimeContext)
+        {
+            _navigationService = navigationService;
+            _runtimeContext = runtimeContext;
         }
 
         public virtual Task InitializeAsync(object navigationData)

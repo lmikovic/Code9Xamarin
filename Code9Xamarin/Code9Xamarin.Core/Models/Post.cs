@@ -11,6 +11,8 @@ namespace Code9Xamarin.Core.Models
         public int Comments { get; set; }
         public ImageSource ImageData { get; set; }
         public string[] Tags { get; set; }
+        public string TagsText { get; set; }
+        public bool HasTags { get; set; }
         public string Description { get; set; }
         public string CreatedBy { get; set; }
         public List<Comment> CommentList { get; set; }

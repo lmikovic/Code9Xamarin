@@ -6,8 +6,8 @@
         <StackLayout>
             <Label FontSize="20"
                    Text="Loading..."
-                   VerticalOptions="Center"
-                   HorizontalOptions="Center"/>
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalOptions="CenterAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

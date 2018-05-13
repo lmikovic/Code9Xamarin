@@ -112,6 +112,7 @@
     <Content Include="Assets\like.png" />
     <Content Include="Assets\like2.png" />
     <Content Include="Assets\picture.png" />
+    <Content Include="Assets\price.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\LockScreenLogo.scale-125.png" />

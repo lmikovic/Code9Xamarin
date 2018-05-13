@@ -29,29 +29,29 @@ namespace Code9Xamarin.Core.Services
             _serializerSettings.Converters.Add(new StringEnumConverter());
         }
 
-        public async Task<TResult> GetAsync<TResult>(string uri, string token = "")
+        public async Task<TResult> GetAsync<TResult>(Uri uri, string token = "")
         {
             return await ExecuteHttpMethodAsync<TResult, TResult>(uri, Method.GET, token);
         }
 
-        public async Task<TResult> PostAsync<TRequest, TResult>(string uri, TRequest data, string token = "")
+        public async Task<TResult> PostAsync<TRequest, TResult>(Uri uri, TRequest data, string token = "")
         {
             return await ExecuteHttpMethodAsync<TRequest, TResult>(uri, Method.POST, token, data);
         }
 
-        public async Task<TResult> PutAsync<TRequest ,TResult>(string uri, TRequest data, string token = "")
+        public async Task<TResult> PutAsync<TRequest ,TResult>(Uri uri, TRequest data, string token = "")
         {
             return await ExecuteHttpMethodAsync<TRequest, TResult>(uri, Method.PUT, token, data);
         }
 
-        public async Task<TResult> DeleteAsync<TRequest, TResult>(string uri, TRequest data, string token = "")
+        public async Task<TResult> DeleteAsync<TRequest, TResult>(Uri uri, TRequest data, string token = "")
         {
             return await ExecuteHttpMethodAsync<TRequest, TResult>(uri, Method.DELETE, token, data);
         }
 
-        private async Task<TResult> ExecuteHttpMethodAsync<TRequest, TResult>(string uri, Method httpMethod, string token = "", TRequest data = default(TRequest))
+        private async Task<TResult> ExecuteHttpMethodAsync<TRequest, TResult>(Uri uri, Method httpMethod, string token = "", TRequest data = default(TRequest))
         {
-            _restClient.BaseUrl = new Uri(uri);
+            _restClient.BaseUrl = uri;
 
             RestRequest restRequest = CreateRestRequest(token);
             restRequest.Method = httpMethod;

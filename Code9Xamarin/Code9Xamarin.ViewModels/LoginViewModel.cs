@@ -1,7 +1,6 @@
-﻿using Code9Xamarin.Core;
-using Code9Xamarin.Core.Services.Interfaces;
+﻿using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -16,7 +15,11 @@ namespace Code9Xamarin.ViewModels
         private readonly IProfileService _profileService;
 
         public LoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IProfileService profileService)
-            : base(navigationService)
+            : this(navigationService, authenticationService, profileService, new RuntimeContext())
+        { }
+
+        public LoginViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IProfileService profileService, IRuntimeContext runtimeContext)
+            : base(navigationService, runtimeContext)
         {
             _authenticationService = authenticationService;
             _profileService = profileService;
@@ -24,7 +27,7 @@ namespace Code9Xamarin.ViewModels
             LoginCommand = new Command(async () => await Login(),
                 () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
 
-            RegisterCommand = new Command(async() => await RegisterNewUser());
+            RegisterCommand = new Command(async () => await RegisterNewUser());
         }
 
         private bool _isBusy;
@@ -70,7 +73,7 @@ namespace Code9Xamarin.ViewModels
                 IsBusy = true;
 
                 await _authenticationService.Login(UserName, Password);
-                await _profileService.GetProfile(AppSettings.Token);
+                await _profileService.GetProfile(_runtimeContext.Token);
                 _navigationService.SetRootPage(typeof(PostsViewModel));
             }
             catch (Exception ex)

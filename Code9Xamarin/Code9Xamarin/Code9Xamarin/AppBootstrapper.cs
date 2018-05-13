@@ -7,7 +7,7 @@ namespace Code9Xamarin
 {
     public class AppBootstrapper
     {
-        //todo use some dependency injection container (autofac, unity, ninject)?
+        //we can use some dependency injection container (autofac, unity, ninject)
         public static INavigationService NavigationService => new NavigationService();
         public static IRequestService RequestService => new RequestService();
         public static IAuthenticationService AuthenticationService => new AuthenticationService(RequestService);

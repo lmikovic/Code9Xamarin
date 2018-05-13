@@ -1,11 +1,11 @@
 ﻿using Code9Insta.API.Core.DTO;
-using Code9Xamarin.Core;
 using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -18,15 +18,24 @@ namespace Code9Xamarin.ViewModels
         public Command CameraCommand { get; }
         public Command GalleryCommand { get; }
         public Command SaveCommand { get; }
+        public Command AddTagCommand { get; }
+        public Command<string> DeleteTagCommand { get; }
 
         public PostDetailsViewModel(INavigationService navigationService, IPostService postService)
-            : base(navigationService)
+            : this(navigationService, postService, new RuntimeContext())
+        { }
+
+        public PostDetailsViewModel(INavigationService navigationService, IPostService postService, IRuntimeContext runtimeContext)
+            : base(navigationService, runtimeContext)
         {
             _postService = postService;
 
-            CameraCommand = new Command(async () => await CameraClick(), () => !IsBusy);
-            GalleryCommand = new Command(async () => await GalleryClick(), () => !IsBusy);
-            SaveCommand = new Command(async () => await SaveClick(), () => !IsBusy && PostImage != null);
+            CameraCommand = new Command(async () => await Camera(), () => !IsBusy);
+            GalleryCommand = new Command(async () => await Gallery(), () => !IsBusy);
+            SaveCommand = new Command(async () => await Save(), () => !IsBusy && PostImage != null);
+
+            AddTagCommand = new Command(() => AddTag(), () => !IsBusy && !string.IsNullOrEmpty(TagText));
+            DeleteTagCommand = new Command<string>((item) => DeleteTag(item), (item) => !IsBusy);
         }
 
         public override void Initialize(object navigationData)
@@ -39,6 +48,8 @@ namespace Code9Xamarin.ViewModels
 
                 PostImage = post.ImageData;
                 Description = post.Description;
+                Tags = new ObservableCollection<string>(post.Tags);
+
                 _postId = post.Id;
             }
             catch (Exception ex)
@@ -79,6 +90,29 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
+        private string _tagText;
+        public string TagText
+        {
+            get { return _tagText; }
+            set
+            {
+                _tagText = value;
+                OnPropertyChanged();
+                AddTagCommand.ChangeCanExecute();
+            }
+        }
+
+        private ObservableCollection<string> _tags;
+        public ObservableCollection<string> Tags
+        {
+            get { return _tags; }
+            set
+            {
+                _tags = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ImageSource _postImage;
         public ImageSource PostImage
         {
@@ -91,7 +125,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task CameraClick()
+        private async Task Camera()
         {
             try
             {
@@ -137,7 +171,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task GalleryClick()
+        private async Task Gallery()
         {
             try
             {
@@ -177,11 +211,18 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task SaveClick()
+        private async Task Save()
         {
             try
             {
                 IsBusy = true;
+                string[] tags = null;
+
+                if (Tags != null)
+                {
+                    tags = new string[Tags.Count];
+                    Tags.CopyTo(tags, 0);
+                }
 
                 if (_photoStream != null)
                 {
@@ -195,10 +236,11 @@ namespace Code9Xamarin.ViewModels
                     CreatePostDto newPost = new CreatePostDto
                     {
                         Description = Description,
-                        ImageData = byteImage
+                        ImageData = byteImage,
+                        Tags = tags
                     };
 
-                    await _postService.CreatePost(newPost, AppSettings.Token);
+                    await _postService.CreatePost(newPost, _runtimeContext.Token);
                     await _navigationService.NavigateAsync<PostsViewModel>();
                 }
 
@@ -207,10 +249,11 @@ namespace Code9Xamarin.ViewModels
                 {
                     EditPostDto newPost = new EditPostDto
                     {
-                        Description = Description
+                        Description = Description,
+                        Tags = tags
                     };
 
-                    await _postService.EditPost(newPost, _postId, AppSettings.Token);
+                    await _postService.EditPost(newPost, _postId, _runtimeContext.Token);
                     await _navigationService.NavigateAsync<PostsViewModel>();
                 }
             }
@@ -222,6 +265,24 @@ namespace Code9Xamarin.ViewModels
             {
                 IsBusy = false;
             }
+        }
+
+        private void DeleteTag(string item)
+        {
+            Tags.Remove(item);
+        }
+
+        private void AddTag()
+        {
+            if (Tags == null)
+            {
+                Tags = new ObservableCollection<string>();
+            }
+            if (Tags.IndexOf(TagText) == -1)
+            {
+                Tags.Add(TagText);
+            }
+            TagText = "";
         }
     }
 }

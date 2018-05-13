@@ -23,7 +23,7 @@ namespace Code9Xamarin.Core.Services
 
         public Task NavigateAsync<TViewModel>(object parameter, bool animated = true)
         {
-            return NavigateToAsync(typeof(TViewModel), parameter, animated);    //todo: use parameter for navigation
+            return NavigateToAsync(typeof(TViewModel), parameter, animated);
         }
 
         private async Task NavigateToAsync(Type viewModelType, object parameter, bool animated)

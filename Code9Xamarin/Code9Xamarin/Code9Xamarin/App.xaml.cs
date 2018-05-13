@@ -1,5 +1,4 @@
-﻿using Code9Xamarin.ViewModels;
-using Code9Xamarin.Views;
+﻿using Code9Xamarin.Views;
 using Xamarin.Forms;
 
 namespace Code9Xamarin
@@ -18,8 +17,8 @@ namespace Code9Xamarin
 
         protected override void OnStart ()
 		{
-			// Handle when your app starts
-		}
+            // Handle when your app starts
+        }
 
 		protected override void OnSleep ()
 		{

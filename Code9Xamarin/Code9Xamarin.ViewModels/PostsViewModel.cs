@@ -1,10 +1,9 @@
-﻿using Code9Xamarin.Core;
-using Code9Xamarin.Core.Mappers;
+﻿using Code9Xamarin.Core.Mappers;
 using Code9Xamarin.Core.Models;
 using Code9Xamarin.Core.Services.Interfaces;
+using Code9Xamarin.Core.Settings;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -22,19 +21,25 @@ namespace Code9Xamarin.ViewModels
         public Command<Guid> CommentCommand { get; }
         public Command<Guid> DeleteCommand { get; }
         public Command<Guid> EditCommand { get; }
+        public Command SearchCommand { get; }
 
         public PostsViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IPostService postService)
-            : base(navigationService)
+            : this(navigationService, authenticationService, postService, new RuntimeContext())
+        { }
+
+        public PostsViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IPostService postService, IRuntimeContext runtimeContext)
+            : base(navigationService, runtimeContext)
         {
             _postService = postService;
             _authenticationService = authenticationService;
 
-            LikeCommand = new Command<Guid>(async (id) => await LikeClick(id), (id) => !IsBusy);
+            LikeCommand = new Command<Guid>(async (id) => await Like(id), (id) => !IsBusy);
             CreatePostCommand = new Command(async () => await CreatePost(), () => !IsBusy);
             LogOutCommand = new Command(async () => await LogOut(), () => !IsBusy);
-            CommentCommand = new Command<Guid>(async (id) => await CommentClick(id), (id) => !IsBusy);
-            DeleteCommand = new Command<Guid>(async (id) => await DeleteClick(id), (id) => !IsBusy);
-            EditCommand = new Command<Guid>(async (id) => await EditClick(id), (id) => !IsBusy);
+            CommentCommand = new Command<Guid>(async (id) => await Comment(id), (id) => !IsBusy);
+            DeleteCommand = new Command<Guid>(async (id) => await Delete(id), (id) => !IsBusy);
+            EditCommand = new Command<Guid>(async (id) => await Edit(id), (id) => !IsBusy);
+            SearchCommand = new Command(async () => await Search(), () => !IsBusy);
         }
 
         private ObservableCollection<Post> _postList;
@@ -62,15 +67,38 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
+        private string _searchText;
+        public string SearchText
+        {
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
+                OnPropertyChanged();
+            }
+        }
+
         public override async Task InitializeAsync(object navigationData)
+        {
+            await SearchPosts("");
+        }
+
+        private async Task Search()
+        {
+            await SearchPosts(SearchText);
+        }
+
+        private async Task SearchPosts(string searchText)
         {
             try
             {
                 IsBusy = true;
 
-                var allPosts = await _postService.GetAllPosts("", AppSettings.Token);
+                var searchPosts = await _postService.GetAllPosts(searchText, _runtimeContext.Token);
 
-                PostList = new ObservableCollection<Post>(PostMapper.ToDomainEntities(allPosts));
+                var postMapper = new PostMapper();
+
+                PostList = new ObservableCollection<Post>(postMapper.ToDomainEntities(searchPosts));
             }
             catch (Exception ex)
             {
@@ -82,14 +110,14 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task<bool> LikeClick(Guid id)
+        private async Task<bool> Like(Guid id)
         {
             try
             {
                 IsBusy = true;
 
-                await _postService.LikePost(id, AppSettings.Token);
-                var postDto = await _postService.GetPost(id, AppSettings.Token);
+                await _postService.LikePost(id, _runtimeContext.Token);
+                var postDto = await _postService.GetPost(id, _runtimeContext.Token);
                 PostList.First(x => x.Id == id).Likes = postDto.Likes;
                 PostList.First(x => x.Id == id).IsLikedByUser = postDto.IsLikedByUser;
 
@@ -142,7 +170,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task CommentClick(Guid id)
+        private async Task Comment(Guid id)
         {
             try
             {
@@ -159,7 +187,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task EditClick(Guid id)
+        private async Task Edit(Guid id)
         {
             try
             {
@@ -177,7 +205,7 @@ namespace Code9Xamarin.ViewModels
             }
         }
 
-        private async Task DeleteClick(Guid id)
+        private async Task Delete(Guid id)
         {
             try
             {

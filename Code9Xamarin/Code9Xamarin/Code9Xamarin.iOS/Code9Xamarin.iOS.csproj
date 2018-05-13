@@ -158,4 +158,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\avatar.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\price.png" />
+  </ItemGroup>
 </Project>

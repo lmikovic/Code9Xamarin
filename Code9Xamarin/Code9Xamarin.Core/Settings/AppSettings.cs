@@ -2,12 +2,12 @@
 using Plugin.Settings.Abstractions;
 using System;
 
-namespace Code9Xamarin.Core
+namespace Code9Xamarin.Core.Settings
 {
     public static class AppSettings
     {
         // Endpoints
-        private const string DefaultBaseEndpoint = "http://code9instaapi20180404072500.azurewebsites.net";
+        private const string DefaultBaseEndpoint = "http://code9api30042018.azurewebsites.net"; // "http://code9instaapi20180404072500.azurewebsites.net";
 
         private static ISettings Settings => CrossSettings.Current;
 

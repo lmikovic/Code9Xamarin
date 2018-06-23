@@ -26,7 +26,7 @@ namespace Code9Xamarin.Core.Services
         {
             UriBuilder builder = new UriBuilder(_runtimeContext.BaseEndpoint)
             {
-                Path = "api/token/request",
+                Path = "api/tokens/request",
                 Query = $"userName={Uri.EscapeDataString(userName)}&password={Uri.EscapeDataString(password)}"
             };
 
@@ -56,7 +56,7 @@ namespace Code9Xamarin.Core.Services
         {
             UriBuilder builder = new UriBuilder(_runtimeContext.BaseEndpoint)
             {
-                Path = $"api/token/refresh",
+                Path = $"api/tokens/refresh",
                 Query = $"userId={userId}&refreshToken={Uri.EscapeDataString(refreshToken)}" //refreshToken can have a plus sign, and that's why we have to escape it
             };
 

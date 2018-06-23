@@ -25,12 +25,13 @@ namespace Code9Xamarin.Core.UnitTests.Mappers
                 UserId = Guid.NewGuid(),
                 CreatedOn = DateTime.Now,
                 Id = Guid.NewGuid(),
-                Text = "Test"
+                Text = "Test",
+                Handle = "UserName"
             };
 
             var comment = _mapper.ToDomainEntity(commentDto);
 
-            Assert.AreEqual(commentDto.UserId.ToString(), comment.CreatedBy);
+            Assert.AreEqual(commentDto.Handle, comment.CreatedBy);
             Assert.AreEqual(commentDto.CreatedOn, comment.CreatedOn);
             Assert.AreEqual(commentDto.Id, comment.Id);
             Assert.AreEqual(commentDto.Text, comment.Text);
@@ -46,25 +47,27 @@ namespace Code9Xamarin.Core.UnitTests.Mappers
                     UserId = Guid.NewGuid(),
                     CreatedOn = DateTime.Now,
                     Id = Guid.NewGuid(),
-                    Text = "Test1"
+                    Text = "Test1",
+                    Handle = "UserName1"
                 },
                 new GetCommentDto
                 {
                     UserId = Guid.NewGuid(),
                     CreatedOn = DateTime.Now,
                     Id = Guid.NewGuid(),
-                    Text = "Test2"
+                    Text = "Test2",
+                    Handle = "UserName2"
                 },
             };
 
             var comments = _mapper.ToDomainEntities(getCommentDtos);
 
-            Assert.AreEqual(getCommentDtos[0].UserId.ToString(), comments[0].CreatedBy);
+            Assert.AreEqual(getCommentDtos[0].Handle, comments[0].CreatedBy);
             Assert.AreEqual(getCommentDtos[0].CreatedOn, comments[0].CreatedOn);
             Assert.AreEqual(getCommentDtos[0].Id, comments[0].Id);
             Assert.AreEqual(getCommentDtos[0].Text, comments[0].Text);
 
-            Assert.AreEqual(getCommentDtos[1].UserId.ToString(), comments[1].CreatedBy);
+            Assert.AreEqual(getCommentDtos[1].Handle, comments[1].CreatedBy);
             Assert.AreEqual(getCommentDtos[1].CreatedOn, comments[1].CreatedOn);
             Assert.AreEqual(getCommentDtos[1].Id, comments[1].Id);
             Assert.AreEqual(getCommentDtos[1].Text, comments[1].Text);

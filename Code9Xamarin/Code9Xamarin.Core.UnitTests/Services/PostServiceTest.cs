@@ -81,9 +81,9 @@ namespace Code9Xamarin.Core.UnitTests.Services
                     },
                     new PostDto
                     {
-                        Comments = new Collection<CommentDto>
+                        Comments = new Collection<GetCommentDto>
                         {
-                            new CommentDto { Id = Guid.NewGuid(), Text = "CommentText"}
+                            new GetCommentDto { Id = Guid.NewGuid(), Text = "CommentText"}
                         },
                         CreatedBy = "UserName2",
                         CreatedOn = DateTime.MinValue,

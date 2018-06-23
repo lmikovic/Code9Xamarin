@@ -24,7 +24,7 @@ namespace Code9Xamarin.Core.Mappers
         public Post ToDomainEntity(PostDto postDto)
         {
             var commentList = new List<Comment>();
-            postDto.Comments = postDto.Comments ?? new Collection<CommentDto>();
+            postDto.Comments = postDto.Comments ?? new Collection<GetCommentDto>();
 
             foreach (var commentDto in postDto.Comments)
             {

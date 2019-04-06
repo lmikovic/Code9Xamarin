@@ -40,42 +40,34 @@ namespace Code9Xamarin.ViewModels
             DeleteCommand = new Command<Guid>(async (id) => await Delete(id), (id) => !IsBusy);
             EditCommand = new Command<Guid>(async (id) => await Edit(id), (id) => !IsBusy);
             SearchCommand = new Command(async () => await Search(), () => !IsBusy);
+
+            PropertyChanged += PostsViewModel_PropertyChanged;
+        }
+
+        // Everytime a property in RegisterViewModel calls SetProeprty with a new value check if the RegisterCommand meets the criteria to be executed
+        private void PostsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            LikeCommand.ChangeCanExecute();
+            CreatePostCommand.ChangeCanExecute();
+            LogOutCommand.ChangeCanExecute();
+            CommentCommand.ChangeCanExecute();
+            DeleteCommand.ChangeCanExecute();
+            EditCommand.ChangeCanExecute();
+            SearchCommand.ChangeCanExecute();
         }
 
         private ObservableCollection<Post> _postList;
         public ObservableCollection<Post> PostList
         {
-            get { return _postList; }
-            set
-            {
-                _postList = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                CreatePostCommand.ChangeCanExecute();
-                LikeCommand.ChangeCanExecute();
-                DeleteCommand.ChangeCanExecute();
-            }
+            get => _postList;
+            set => SetProperty(ref _postList, value);
         }
 
         private string _searchText;
         public string SearchText
         {
-            get { return _searchText; }
-            set
-            {
-                _searchText = value;
-                OnPropertyChanged();
-            }
+            get => _searchText;
+            set => SetProperty(ref _searchText, value);
         }
 
         public override async Task InitializeAsync(object navigationData)

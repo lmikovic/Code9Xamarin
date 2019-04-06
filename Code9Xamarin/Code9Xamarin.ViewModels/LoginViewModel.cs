@@ -11,6 +11,20 @@ namespace Code9Xamarin.ViewModels
         public Command LoginCommand { get; }
         public Command RegisterCommand { get; }
 
+        private string _userName;
+        public string UserName
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
+        }
+
         private readonly IAuthenticationService _authenticationService;
         private readonly IProfileService _profileService;
 
@@ -24,46 +38,17 @@ namespace Code9Xamarin.ViewModels
             _authenticationService = authenticationService;
             _profileService = profileService;
 
-            LoginCommand = new Command(async () => await Login(),
-                () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
+            LoginCommand = new Command(
+                execute: async () => await Login(),
+                canExecute: () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password));
 
             RegisterCommand = new Command(async () => await RegisterNewUser());
+            PropertyChanged += LoginViewModel_PropertyChanged;
         }
 
-        private bool _isBusy;
-        public bool IsBusy
+        private void LoginViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                LoginCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _userName;
-        public string UserName
-        {
-            get { return _userName; }
-            set
-            {
-                _userName = value;
-                OnPropertyChanged();
-                LoginCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _password;
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-                LoginCommand.ChangeCanExecute();
-            }
+            LoginCommand.ChangeCanExecute();
         }
 
         private async Task Login()

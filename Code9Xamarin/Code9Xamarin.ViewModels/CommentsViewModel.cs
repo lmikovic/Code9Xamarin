@@ -13,9 +13,23 @@ namespace Code9Xamarin.ViewModels
     {
         public Command SaveCommand { get; }
         public Command<Guid> DeleteCommand { get; }
+
+        private string _text;
+        public string Text
+        {
+            get => _text;
+            set => SetProperty(ref _text, value);
+        }
+
+        private ObservableCollection<Comment> _comments;
+        public ObservableCollection<Comment> Comments
+        {
+            get => _comments;
+            set => SetProperty(ref _comments, value);
+        }
+
         private Guid _postId;
         private CommentMapper _commentMapper;
-
         private readonly ICommentService _commentService;
 
         public CommentsViewModel(INavigationService navigationService, ICommentService commentService)
@@ -30,6 +44,14 @@ namespace Code9Xamarin.ViewModels
             _commentMapper = new CommentMapper();
             SaveCommand = new Command(async () => await Save(), () => !IsBusy && !string.IsNullOrEmpty(Text));
             DeleteCommand = new Command<Guid>(async (id) => await Delete(id), (id) => !IsBusy);
+
+            PropertyChanged += CommentsViewModel_PropertyChanged;
+        }
+
+        private void CommentsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            SaveCommand.ChangeCanExecute();
+            DeleteCommand.ChangeCanExecute();
         }
 
         public async override Task InitializeAsync(object navigationData)
@@ -49,41 +71,6 @@ namespace Code9Xamarin.ViewModels
             finally
             {
                 IsBusy = false;
-            }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                SaveCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _text;
-        public string Text
-        {
-            get { return _text; }
-            set
-            {
-                _text = value;
-                OnPropertyChanged();
-                SaveCommand.ChangeCanExecute();
-            }
-        }
-
-        private ObservableCollection<Comment> _comments;
-        public ObservableCollection<Comment> Comments
-        {
-            get { return _comments; }
-            set
-            {
-                _comments = value;
-                OnPropertyChanged();
             }
         }
 

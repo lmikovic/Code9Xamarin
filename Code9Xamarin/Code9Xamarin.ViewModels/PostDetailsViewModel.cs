@@ -21,6 +21,38 @@ namespace Code9Xamarin.ViewModels
         public Command AddTagCommand { get; }
         public Command<string> DeleteTagCommand { get; }
 
+
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set => SetProperty(ref _description, value);
+        }
+
+        private string _tagText;
+        public string TagText
+        {
+            get => _tagText;
+            set => SetProperty(ref _tagText, value);
+        }
+
+        private ObservableCollection<string> _tags;
+        public ObservableCollection<string> Tags
+        {
+            get => _tags;
+            set => SetProperty(ref _tags, value);
+        }
+
+        private ImageSource _postImage;
+        public ImageSource PostImage
+        {
+            get => _postImage;
+            set => SetProperty(ref _postImage, value);
+        }
+
+        private Guid _postId;
+        private Stream _photoStream;
+
         public PostDetailsViewModel(INavigationService navigationService, IPostService postService)
             : this(navigationService, postService, new RuntimeContext())
         { }
@@ -36,6 +68,17 @@ namespace Code9Xamarin.ViewModels
 
             AddTagCommand = new Command(() => AddTag(), () => !IsBusy && !string.IsNullOrEmpty(TagText));
             DeleteTagCommand = new Command<string>((item) => DeleteTag(item), (item) => !IsBusy);
+
+            this.PropertyChanged += PostDetailsViewModel_PropertyChanged;
+        }
+
+        private void PostDetailsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CameraCommand.ChangeCanExecute();
+            GalleryCommand.ChangeCanExecute();
+            SaveCommand.ChangeCanExecute();
+            AddTagCommand.ChangeCanExecute();
+            DeleteTagCommand.ChangeCanExecute();
         }
 
         public override void Initialize(object navigationData)
@@ -59,69 +102,6 @@ namespace Code9Xamarin.ViewModels
             finally
             {
                 IsBusy = false;
-            }
-        }
-
-        private Guid _postId;
-        private Stream _photoStream;
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                CameraCommand.ChangeCanExecute();
-                GalleryCommand.ChangeCanExecute();
-                SaveCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _description;
-        public string Description
-        {
-            get { return _description; }
-            set
-            {
-                _description = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _tagText;
-        public string TagText
-        {
-            get { return _tagText; }
-            set
-            {
-                _tagText = value;
-                OnPropertyChanged();
-                AddTagCommand.ChangeCanExecute();
-            }
-        }
-
-        private ObservableCollection<string> _tags;
-        public ObservableCollection<string> Tags
-        {
-            get { return _tags; }
-            set
-            {
-                _tags = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ImageSource _postImage;
-        public ImageSource PostImage
-        {
-            get { return _postImage; }
-            set
-            {
-                _postImage = value;
-                OnPropertyChanged();
-                SaveCommand.ChangeCanExecute();
             }
         }
 

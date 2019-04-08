@@ -23,6 +23,20 @@ namespace Code9Xamarin.ViewModels
         public Command<Guid> EditCommand { get; }
         public Command SearchCommand { get; }
 
+        private ObservableCollection<Post> _postList;
+        public ObservableCollection<Post> PostList
+        {
+            get => _postList;
+            set => SetProperty(ref _postList, value);
+        }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set => SetProperty(ref _searchText, value);
+        }
+
         public PostsViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IPostService postService)
             : this(navigationService, authenticationService, postService, new RuntimeContext())
         { }
@@ -54,20 +68,6 @@ namespace Code9Xamarin.ViewModels
             DeleteCommand.ChangeCanExecute();
             EditCommand.ChangeCanExecute();
             SearchCommand.ChangeCanExecute();
-        }
-
-        private ObservableCollection<Post> _postList;
-        public ObservableCollection<Post> PostList
-        {
-            get => _postList;
-            set => SetProperty(ref _postList, value);
-        }
-
-        private string _searchText;
-        public string SearchText
-        {
-            get => _searchText;
-            set => SetProperty(ref _searchText, value);
         }
 
         public override async Task InitializeAsync(object navigationData)

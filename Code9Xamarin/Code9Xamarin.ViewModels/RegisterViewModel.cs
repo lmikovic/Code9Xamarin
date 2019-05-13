@@ -8,6 +8,34 @@ namespace Code9Xamarin.ViewModels
 {
     public class RegisterViewModel : ViewModelBase
     {
+        private string _userName;
+        public string UserName
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
+        }
+
+        private string _email;
+        public string Email
+        {
+            get => _email;
+            set => SetProperty(ref _email, value);
+        }
+
+        private bool _isPublic;
+        public bool IsPublic
+        {
+            get => _isPublic;
+            set => SetProperty(ref _isPublic, value);
+        }
+
         public Command RegisterCommand { get; }
 
         private readonly IProfileService _profileService;
@@ -16,67 +44,17 @@ namespace Code9Xamarin.ViewModels
             : base(navigationService)
         {
             _profileService = profileService;
-            RegisterCommand = new Command(async () => await RegisterNewUser(),
-                () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email));
+            RegisterCommand = new Command(
+                 execute: async () => await RegisterNewUser(),
+                 canExecute: () => !IsBusy && !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email));
+
+            this.PropertyChanged += RegisterViewModel_PropertyChanged;
         }
 
-        private bool _isBusy;
-        public bool IsBusy
+        // Everytime a property in RegisterViewModel calls SetProeprty with a new value check if the RegisterCommand meets the criteria to be executed
+        private void RegisterViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                RegisterCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _userName;
-        public string UserName
-        {
-            get { return _userName; }
-            set
-            {
-                _userName = value;
-                OnPropertyChanged();
-                RegisterCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _password;
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                _password = value;
-                OnPropertyChanged();
-                RegisterCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _email;
-        public string Email
-        {
-            get { return _email; }
-            set
-            {
-                _email = value;
-                OnPropertyChanged();
-                RegisterCommand.ChangeCanExecute();
-            }
-        }
-
-        private bool _isPublic;
-        public bool IsPublic
-        {
-            get { return _isPublic; }
-            set
-            {
-                _isPublic = value;
-                OnPropertyChanged();
-            }
+            RegisterCommand.ChangeCanExecute();
         }
 
         private async Task RegisterNewUser()

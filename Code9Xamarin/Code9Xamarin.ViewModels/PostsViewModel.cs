@@ -23,6 +23,20 @@ namespace Code9Xamarin.ViewModels
         public Command<Guid> EditCommand { get; }
         public Command SearchCommand { get; }
 
+        private ObservableCollection<Post> _postList;
+        public ObservableCollection<Post> PostList
+        {
+            get => _postList;
+            set => SetProperty(ref _postList, value);
+        }
+
+        private string _searchText;
+        public string SearchText
+        {
+            get => _searchText;
+            set => SetProperty(ref _searchText, value);
+        }
+
         public PostsViewModel(INavigationService navigationService, IAuthenticationService authenticationService, IPostService postService)
             : this(navigationService, authenticationService, postService, new RuntimeContext())
         { }
@@ -40,42 +54,20 @@ namespace Code9Xamarin.ViewModels
             DeleteCommand = new Command<Guid>(async (id) => await Delete(id), (id) => !IsBusy);
             EditCommand = new Command<Guid>(async (id) => await Edit(id), (id) => !IsBusy);
             SearchCommand = new Command(async () => await Search(), () => !IsBusy);
+
+            PropertyChanged += PostsViewModel_PropertyChanged;
         }
 
-        private ObservableCollection<Post> _postList;
-        public ObservableCollection<Post> PostList
+        // Everytime a property in RegisterViewModel calls SetProeprty with a new value check if the RegisterCommand meets the criteria to be executed
+        private void PostsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            get { return _postList; }
-            set
-            {
-                _postList = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged();
-                CreatePostCommand.ChangeCanExecute();
-                LikeCommand.ChangeCanExecute();
-                DeleteCommand.ChangeCanExecute();
-            }
-        }
-
-        private string _searchText;
-        public string SearchText
-        {
-            get { return _searchText; }
-            set
-            {
-                _searchText = value;
-                OnPropertyChanged();
-            }
+            LikeCommand.ChangeCanExecute();
+            CreatePostCommand.ChangeCanExecute();
+            LogOutCommand.ChangeCanExecute();
+            CommentCommand.ChangeCanExecute();
+            DeleteCommand.ChangeCanExecute();
+            EditCommand.ChangeCanExecute();
+            SearchCommand.ChangeCanExecute();
         }
 
         public override async Task InitializeAsync(object navigationData)
